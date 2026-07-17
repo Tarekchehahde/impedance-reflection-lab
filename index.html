@@ -46,18 +46,18 @@
     }
 
     .wrap {
-      max-width: 1440px;
+      max-width: 1480px;
       margin: 0 auto;
-      padding: 1.25rem 1.25rem 3rem;
+      padding: 1rem 1.25rem 2.5rem;
     }
 
     header.hero {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      gap: 1.5rem;
+      gap: 1.25rem;
       align-items: end;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem 0 1.25rem;
+      margin-bottom: 1rem;
+      padding: 0.25rem 0 0.9rem;
       border-bottom: 1px solid var(--line);
       animation: rise 0.7s ease both;
     }
@@ -107,63 +107,83 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(260px, 300px) 1fr minmax(260px, 300px);
+      grid-template-columns: minmax(240px, 280px) minmax(320px, 1fr) minmax(240px, 280px);
       gap: 1rem;
       align-items: start;
     }
 
-    .chart-split {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 0.75rem;
-      align-items: stretch;
+    .chart-panel .panel-body {
+      padding: 0.85rem;
     }
-    .life-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      min-height: 0;
+    .chart-shell {
+      background: var(--chart-bg);
+      border-radius: 12px;
+      padding: 0.65rem;
+      position: relative;
+    }
+
+    /* Full-width emitter/receiver band — not cramped beside Smith */
+    .playground {
+      margin-top: 1rem;
+      animation: rise 0.85s ease both;
+      animation-delay: 0.1s;
+    }
+    .playground .panel-body {
+      padding: 1rem 1.1rem 1.15rem;
+    }
+    .playground-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.85fr) minmax(420px, 1.35fr);
+      gap: 1rem;
+      align-items: stretch;
     }
     .life-shell {
       background: var(--chart-bg);
       border-radius: 12px;
-      padding: 0.55rem 0.55rem 0.45rem;
-      flex: 1;
+      padding: 0.7rem 0.75rem 0.65rem;
       display: flex;
       flex-direction: column;
       min-height: 0;
+      height: 100%;
     }
     .life-shell .life-title {
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(180, 210, 230, 0.75);
+      color: rgba(180, 210, 230, 0.8);
       font-family: var(--mono);
-      margin: 0 0 0.35rem 0.15rem;
+      margin: 0 0 0.5rem 0.1rem;
     }
     .life-shell canvas {
       width: 100%;
       height: auto;
       display: block;
       border-radius: 8px;
-      flex: 1;
+    }
+    .life-shell.playground-main canvas {
+      min-height: 280px;
+    }
+    .playground-meta {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) 1.1fr;
+      gap: 1rem 1.25rem;
+      margin-top: 1rem;
+      align-items: start;
     }
     .life-caption {
-      margin-top: 0.65rem;
-      font-size: 0.86rem;
+      margin: 0;
+      font-size: 0.9rem;
       color: var(--ink-soft);
-      line-height: 1.45;
-      min-height: 3.2em;
+      line-height: 1.5;
     }
     .life-caption strong { color: var(--ink); }
     .power-bars {
       display: grid;
-      gap: 0.4rem;
-      margin-top: 0.55rem;
+      gap: 0.45rem;
     }
     .power-bar {
       display: grid;
-      grid-template-columns: 5.5rem 1fr 3.2rem;
+      grid-template-columns: 7.5rem 1fr 3.5rem;
       gap: 0.45rem;
       align-items: center;
       font-size: 0.75rem;
@@ -184,6 +204,77 @@
     .power-bar .fill.fwd { background: var(--teal); }
     .power-bar .fill.ref { background: var(--copper); }
     .power-bar .fill.acc { background: var(--signal); }
+
+    .link-chain {
+      list-style: none;
+      margin: 0 0 0.65rem;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.4rem;
+    }
+    .link-chain li {
+      background: rgba(12, 26, 40, 0.55);
+      border: 1px solid rgba(90, 140, 170, 0.35);
+      border-radius: 8px;
+      padding: 0.45rem 0.4rem;
+      text-align: center;
+      font-size: 0.7rem;
+      line-height: 1.3;
+      color: rgba(180, 210, 230, 0.75);
+      font-family: var(--mono);
+    }
+    .link-chain li strong {
+      display: block;
+      color: #2dd4a8;
+      font-size: 0.76rem;
+      margin-bottom: 0.2rem;
+      font-family: Outfit, sans-serif;
+    }
+    .link-chain li.active {
+      border-color: rgba(45, 212, 168, 0.7);
+      box-shadow: 0 0 0 1px rgba(45, 212, 168, 0.25);
+    }
+    .link-chain li.dim {
+      opacity: 0.45;
+      border-color: rgba(196, 92, 38, 0.45);
+    }
+    .link-chain li.dim strong { color: #ff8a3d; }
+    .path-dist {
+      margin: 0.65rem 0.1rem 0;
+      color: rgba(180, 210, 230, 0.85);
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .path-dist .row {
+      display: grid;
+      grid-template-columns: 1fr 4.2rem auto;
+      gap: 0.4rem;
+      align-items: center;
+      margin-top: 0.35rem;
+    }
+    .path-dist input[type="number"] {
+      width: 100%;
+      background: rgba(7, 16, 24, 0.8);
+      border: 1px solid rgba(90, 140, 170, 0.4);
+      color: #e8eef2;
+      border-radius: 6px;
+      padding: 0.35rem 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+    .path-dist .unit-hint {
+      color: rgba(180, 210, 230, 0.55);
+      font-size: 0.75rem;
+    }
+    .path-hint {
+      margin: 0.4rem 0.1rem 0.1rem;
+      color: rgba(180, 210, 230, 0.65);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
 
     .panel {
       background: rgba(255, 255, 255, 0.72);
@@ -293,12 +384,6 @@
       line-height: 1.4;
     }
 
-    .chart-shell {
-      background: var(--chart-bg);
-      border-radius: 12px;
-      padding: 0.75rem;
-      position: relative;
-    }
     canvas#smith {
       width: 100%;
       height: auto;
@@ -323,6 +408,14 @@
       border-radius: 50%;
       margin-right: 0.35rem;
       vertical-align: -0.05rem;
+    }
+    .snap-toggle kbd {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.05rem 0.35rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
     }
 
     .metrics {
@@ -413,6 +506,76 @@
     }
     details.lesson ul { padding-left: 1.1rem; }
 
+    .lesson-top {
+      margin-bottom: 1rem;
+    }
+    .lesson-top details.lesson-fold {
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .lesson-top details.lesson-fold summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 0.85rem 1rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+      font-weight: 600;
+      border-bottom: 1px solid transparent;
+    }
+    .lesson-top details.lesson-fold summary::-webkit-details-marker { display: none; }
+    .lesson-top details.lesson-fold summary::before {
+      content: "▸ ";
+      color: var(--copper);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .lesson-top details.lesson-fold[open] summary {
+      border-bottom-color: var(--line);
+    }
+    .lesson-top details.lesson-fold[open] summary::before { content: "▾ "; }
+    .lesson-intro {
+      padding: 0 1rem 1rem;
+    }
+    .lesson-intro p {
+      margin: 0 0 0.65rem;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .lesson-intro ul {
+      margin: 0;
+      padding-left: 1.15rem;
+      font-size: 0.86rem;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+    .lesson-intro li { margin: 0.2rem 0; }
+
+    .results-panel .calc-fold {
+      margin-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      padding-top: 0.65rem;
+    }
+    .results-panel .calc-fold summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--teal-deep);
+      list-style: none;
+      font-size: 0.86rem;
+    }
+    .results-panel .calc-fold summary::-webkit-details-marker { display: none; }
+    .results-panel .calc-fold summary::before {
+      content: "▸ ";
+      color: var(--copper);
+    }
+    .results-panel .calc-fold[open] summary::before { content: "▾ "; }
+    .results-panel .calc-fold .calc-steps {
+      margin-top: 0.75rem;
+    }
+
     footer {
       margin-top: 1.75rem;
       padding-top: 1rem;
@@ -426,18 +589,19 @@
     }
     footer a { color: var(--teal-deep); }
 
-    @media (max-width: 1200px) {
-      .chart-split { grid-template-columns: 1fr; }
-    }
     @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr 1fr; }
       .panel.chart-panel { grid-column: 1 / -1; order: -1; }
+      .playground-grid { grid-template-columns: 1fr; }
+      .playground-meta { grid-template-columns: 1fr; }
       header.hero { grid-template-columns: 1fr; }
       .hero-aside { text-align: left; }
     }
     @media (max-width: 700px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: 1fr; }
+      .link-chain { grid-template-columns: 1fr 1fr; }
+      .link-chain li:last-child { grid-column: 1 / -1; }
     }
   </style>
 </head>
@@ -449,9 +613,31 @@
         <p class="lede">Drag the Smith chart or tune R and X — see Γ on the chart and, beside it, what that means for a coax line and an antenna.</p>
       </div>
       <div class="hero-aside">
-        <strong>Core idea:</strong> mismatch creates reflection. On a line that becomes a <strong>standing wave</strong>; at an antenna it means less power radiated.
+        <strong>Core idea:</strong> mismatch creates reflection. On a line that becomes a <strong>standing wave</strong>; at an antenna it means less power radiated — so a distant <strong>receiver</strong> hears a weaker signal.
       </div>
     </header>
+
+    <section class="panel lesson-top">
+      <details class="lesson-fold">
+        <summary>What am I looking at?</summary>
+        <div class="lesson-intro">
+          <p>
+            The Smith chart is the complex plane of Γ = Γ<sub>r</sub> + jΓ<sub>i</sub>.
+            Every passive load with R ≥ 0 lands inside (or on) the unit circle.
+            Drag the orange marker (or use the inputs) to change the <strong>TX antenna load Z</strong>.
+            That decides how much power is radiated into free space.
+            The <strong>second antenna</strong> does not change with your drag — it only captures the field that was radiated, then feeds the RX radio.
+          </p>
+          <ul>
+            <li><strong>Center</strong> — matched TX load, Γ = 0 → max radiation → strong induced voltage at the RX antenna.</li>
+            <li><strong>Right rim</strong> — open circuit (Γ ≈ +1) → almost nothing radiates → RX silent.</li>
+            <li><strong>Left rim</strong> — short circuit (Γ ≈ −1) → same: reflection, not radiation.</li>
+            <li><strong>|Γ|</strong> — larger radius ⇒ more reflection at <em>your</em> antenna ⇒ weaker waves for the second antenna.</li>
+            <li><strong>Path distance</strong> — free-space falloff ~1/d²; even a good match fades if the RX antenna is far.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
 
     <div class="layout">
       <!-- Controls -->
@@ -524,65 +710,40 @@
             <button type="button" data-r="36" data-x="0">Dipole≈36Ω</button>
             <button type="button" data-r="50" data-x="120">Detuned ant.</button>
           </div>
-          <p class="hint">Tip: try Matched vs Detuned ant. — watch the coax standing wave and antenna radiation change together.</p>
+          <p class="hint">Tip: Matched vs Detuned — watch the playground below respond.</p>
         </div>
       </section>
 
-      <!-- Chart + real-life -->
+      <!-- Smith chart only -->
       <section class="panel chart-panel">
-        <h2>Smith chart · and what it means in the real world</h2>
+        <h2>Smith chart · Γ plane</h2>
         <div class="panel-body">
-          <div class="chart-split">
-            <div>
-              <div class="chart-shell">
-                <canvas id="smith" width="720" height="720" aria-label="Interactive Smith chart"></canvas>
-              </div>
-              <div class="chart-legend">
-                <span><i style="background:#4a9bb8"></i>constant r</span>
-                <span><i style="background:#7a6a9a"></i>constant x</span>
-                <span><i style="background:#ff8a3d"></i>operating point</span>
-                <span><i style="background:#2dd4a8"></i>|Γ| circle</span>
-              </div>
-            </div>
-            <div class="life-stack">
-              <div class="life-shell">
-                <p class="life-title">Coax / feedline — voltage along the line</p>
-                <canvas id="lineViz" width="640" height="280" aria-label="Standing wave on a transmission line"></canvas>
-              </div>
-              <div class="life-shell">
-                <p class="life-title">Antenna — power accepted vs reflected</p>
-                <canvas id="antViz" width="640" height="280" aria-label="Antenna radiation vs reflected power"></canvas>
-              </div>
-            </div>
+          <div class="chart-shell">
+            <canvas id="smith" width="720" height="720" aria-label="Interactive Smith chart"></canvas>
           </div>
-          <div class="power-bars" id="powerBars" aria-live="polite"></div>
-          <p class="life-caption" id="lifeCaption"></p>
+          <div class="chart-legend">
+            <span><i style="background:#4a9bb8"></i>constant r</span>
+            <span><i style="background:#7a6a9a"></i>constant x</span>
+            <span><i style="background:#ff8a3d"></i>operating point</span>
+            <span><i style="background:#2dd4a8"></i>|Γ| circle</span>
+            <span><i style="background:#e8c36a"></i>r×x intersections</span>
+          </div>
+          <label class="snap-toggle hint" style="display:flex;align-items:center;gap:0.45rem;margin-top:0.55rem;cursor:pointer;user-select:none">
+            <input type="checkbox" id="snapGrid" checked />
+            Snap to grid intersections (hold <kbd>Shift</kbd> to free-drag)
+          </label>
         </div>
       </section>
 
-      <!-- Results + steps -->
-      <section class="panel">
-        <h2>Results &amp; walkthrough</h2>
+      <!-- Results -->
+      <section class="panel results-panel">
+        <h2>Results</h2>
         <div class="panel-body">
           <div class="metrics" id="metrics"></div>
-          <h2 style="margin:1.1rem -1rem 0.75rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">Step-by-step</h2>
-          <div class="calc-steps" id="steps"></div>
-
-          <details class="lesson" open>
-            <summary>What am I looking at?</summary>
-            <p>
-              The Smith chart is the complex plane of Γ = Γ<sub>r</sub> + jΓ<sub>i</sub>.
-              Every passive load with R ≥ 0 lands inside (or on) the unit circle.
-            </p>
-            <ul>
-              <li><strong>Center</strong> — matched load, Γ = 0, no reflection.</li>
-              <li><strong>Right rim</strong> — open circuit (Γ ≈ +1).</li>
-              <li><strong>Left rim</strong> — short circuit (Γ ≈ −1).</li>
-              <li><strong>|Γ|</strong> — radius from center; larger means worse match.</li>
-              <li><strong>VSWR</strong> — (1+|Γ|)/(1−|Γ|); 1 is perfect, ∞ is total reflection.</li>
-            </ul>
+          <details class="calc-fold">
+            <summary>Step-by-step walkthrough</summary>
+            <div class="calc-steps" id="steps"></div>
           </details>
-
           <details class="lesson">
             <summary>Formulas used here</summary>
             <p style="font-family:var(--mono); font-size:0.8rem;">
@@ -591,12 +752,50 @@
               Z<sub>L</sub> = Z₀ (1 + Γ) / (1 − Γ)<br />
               VSWR = (1 + |Γ|) / (1 − |Γ|)<br />
               RL = −20 log₁₀(|Γ|) dB<br />
-              ML = −10 log₁₀(1 − |Γ|²) dB
+              ML = −10 log₁₀(1 − |Γ|²) dB<br />
+              Relative RX level ∝ (1 − |Γ|²) / d²
             </p>
           </details>
         </div>
       </section>
     </div>
+
+    <!-- Full-width emitter / receiver playground -->
+    <section class="panel playground">
+      <h2>Emitter ↔ receiver playground</h2>
+      <div class="panel-body">
+        <div class="playground-grid">
+          <div class="life-shell">
+            <p class="life-title">Coax / feedline — voltage along the line</p>
+            <canvas id="lineViz" width="640" height="320" aria-label="Standing wave on a transmission line"></canvas>
+          </div>
+          <div class="life-shell playground-main">
+            <p class="life-title">Two antennas — how the second one hears what you change</p>
+            <ol class="link-chain" id="linkChain" aria-label="Signal path from your match to the receiver">
+              <li><strong>1 · You</strong><span>set Z on the Smith chart</span></li>
+              <li><strong>2 · TX ant</strong><span>accepts 1−|Γ|²</span></li>
+              <li><strong>3 · Air</strong><span>waves carry that RF</span></li>
+              <li><strong>4 · RX ant</strong><span>captures the field</span></li>
+              <li><strong>5 · RX radio</strong><span>shows the result</span></li>
+            </ol>
+            <canvas id="antViz" width="960" height="480" aria-label="TX antenna radiates; RX antenna receives the field"></canvas>
+            <label class="field path-dist">
+              Path distance (how far the second antenna is)
+              <div class="row">
+                <input type="range" id="pathDistRange" min="1" max="10" step="0.1" value="3" />
+                <input type="number" id="pathDist" min="1" max="10" step="0.1" value="3" />
+                <span class="unit-hint">×</span>
+              </div>
+            </label>
+            <p class="hint path-hint">RX power scales as radiated × 1/d². The second antenna is assumed matched — you only alter the TX match on the Smith chart.</p>
+          </div>
+        </div>
+        <div class="playground-meta">
+          <div class="power-bars" id="powerBars" aria-live="polite"></div>
+          <p class="life-caption" id="lifeCaption"></p>
+        </div>
+      </div>
+    </section>
 
     <footer>
       <span>Impedance Lab — interactive learner for Z ↔ Γ</span>
@@ -621,7 +820,43 @@
         x: 0,
         dragging: false,
         latest: null,
+        snapToGrid: true,
+        snapped: false,
+        pathDist: 3,
       };
+
+      /* Drawn Smith-grid values (normalized z). Snap points = every r ∩ x. */
+      const R_GRID = [0, 0.2, 0.5, 1, 2, 5];
+      const X_GRID = [0, 0.2, 0.5, 1, 2, 5, -0.2, -0.5, -1, -2, -5];
+
+      function zToGamma(zRe, zIm) {
+        const denRe = zRe + 1;
+        const denIm = zIm;
+        const numRe = zRe - 1;
+        const numIm = zIm;
+        const denMag2 = denRe * denRe + denIm * denIm;
+        if (denMag2 < 1e-30) return { gRe: 1, gIm: 0 };
+        return {
+          gRe: (numRe * denRe + numIm * denIm) / denMag2,
+          gIm: (numIm * denRe - numRe * denIm) / denMag2,
+        };
+      }
+
+      /** Precomputed Γ points at constant-r × constant-x intersections. */
+      const SNAP_POINTS = (() => {
+        const pts = [];
+        for (const r of R_GRID) {
+          for (const x of X_GRID) {
+            const { gRe, gIm } = zToGamma(r, x);
+            const mag2 = gRe * gRe + gIm * gIm;
+            if (mag2 > 1.0005) continue; // outside chart
+            pts.push({ r, x, gRe, gIm });
+          }
+        }
+        return pts;
+      })();
+
+      const SNAP_PX = 22; // canvas-pixel snap radius
 
       const fmt = (n, d = 3) => {
         if (!Number.isFinite(n)) return "∞";
@@ -733,29 +968,79 @@
         `).join("");
       }
 
-      function renderRealLifeText(c) {
+      function linkLevels(c) {
         const g2 = Math.min(1, c.gMag * c.gMag);
-        const delivered = Math.max(0, 1 - g2);
+        const radiated = Math.max(0, 1 - g2); // fraction accepted at TX antenna
+        const d = Math.max(1, state.pathDist);
+        // Free-space power ~ 1/d²; normalize so d=1 → full coupling of radiated share
+        const pathGain = 1 / (d * d);
+        const rx = Math.min(1, radiated * pathGain);
+        return { g2, radiated, d, pathGain, rx };
+      }
+
+      function renderRealLifeText(c) {
+        const { g2, radiated, d, pathGain, rx } = linkLevels(c);
         const reflectedPct = Math.round(g2 * 100);
-        const deliveredPct = Math.round(delivered * 100);
+        const radPct = Math.round(radiated * 100);
+        const rxPct = Math.round(rx * 100);
+        const pathPct = Math.round(pathGain * 100);
 
         $("powerBars").innerHTML = `
-          <div class="power-bar"><span>Forward</span><div class="track"><div class="fill fwd" style="width:100%"></div></div><span>100%</span></div>
+          <div class="power-bar"><span>TX forward</span><div class="track"><div class="fill fwd" style="width:100%"></div></div><span>100%</span></div>
           <div class="power-bar"><span>Reflected</span><div class="track"><div class="fill ref" style="width:${reflectedPct}%"></div></div><span>${reflectedPct}%</span></div>
-          <div class="power-bar"><span>Accepted</span><div class="track"><div class="fill acc" style="width:${deliveredPct}%"></div></div><span>${deliveredPct}%</span></div>
+          <div class="power-bar"><span>Radiated (TX ant)</span><div class="track"><div class="fill acc" style="width:${radPct}%"></div></div><span>${radPct}%</span></div>
+          <div class="power-bar"><span>Path 1/d²</span><div class="track"><div class="fill fwd" style="width:${pathPct}%"></div></div><span>×${fmt(pathGain, 2)}</span></div>
+          <div class="power-bar"><span>At RX ant</span><div class="track"><div class="fill acc" style="width:${rxPct}%"></div></div><span>${rxPct}%</span></div>
         `;
 
+        // Highlight chain steps by quality
+        const steps = $("linkChain")?.querySelectorAll("li");
+        if (steps && steps.length === 5) {
+          steps.forEach((el) => el.classList.remove("active", "dim"));
+          steps[0].classList.add("active"); // you always set Z
+          if (radiated > 0.5) steps[1].classList.add("active");
+          else steps[1].classList.add("dim");
+          if (radiated > 0.15) steps[2].classList.add("active");
+          else steps[2].classList.add("dim");
+          if (rx > 0.15) { steps[3].classList.add("active"); steps[4].classList.add("active"); }
+          else if (rx > 0.03) { steps[3].classList.add("active"); steps[4].classList.add("dim"); }
+          else { steps[3].classList.add("dim"); steps[4].classList.add("dim"); }
+        }
+
         let story;
-        if (c.gMag < 0.05) {
-          story = `<strong>Well matched.</strong> Almost all transmitter power reaches the antenna and can radiate. The coax shows a smooth traveling wave — little standing-wave ripple.`;
-        } else if (c.gMag < 0.33) {
-          story = `<strong>Usable but imperfect.</strong> About ${deliveredPct}% of power is accepted by the antenna; ${reflectedPct}% bounces back. Mild standing waves appear on the feedline (VSWR ≈ ${fmt(c.vswr, 2)}).`;
-        } else if (c.gMag < 0.85) {
-          story = `<strong>Poor match.</strong> Strong reflection: only ~${deliveredPct}% accepted. Clear standing-wave peaks and nulls on the coax; the radio “sees” a tough load (VSWR ≈ ${fmt(c.vswr, 2)}). Antenna radiates weakly.`;
+        if (rx >= 0.7) {
+          story = `<strong>Link is healthy.</strong> Your Smith-chart Z matches well, so the <em>TX antenna</em> radiates most of the power.
+            Those waves cross the air gap (d ≈ ${fmt(d, 1)}) and induce a voltage in the <em>second antenna</em> — the RX radio sees a strong signal (~${rxPct}%).`;
+        } else if (rx >= 0.25) {
+          story = `<strong>Link is usable.</strong> Radiated share ≈ ${radPct}% (rest reflects on the TX feed).
+            After free-space falloff 1/d² at d≈${fmt(d, 1)}, the RX antenna still captures a medium field (~${rxPct}%).
+            Improve the Smith match <em>or</em> move the antennas closer.`;
+        } else if (radiated < 0.2) {
+          story = `<strong>TX match is the problem.</strong> |Γ| is high — little RF leaves <em>your</em> antenna, so there is almost nothing for the second antenna to receive (RX ≈ ${rxPct}%), even nearby.
+            Fix Z on the Smith chart first; distance cannot create signal that was never radiated.`;
         } else {
-          story = `<strong>Near-total reflection</strong> (open/short-like). Almost nothing is delivered to the antenna. Energy sloshes as a standing wave on the line — this is what high VSWR looks like in hardware.`;
+          story = `<strong>Path is too long for this radiated power.</strong> TX radiates ~${radPct}%, but at d≈${fmt(d, 1)} the 1/d² loss leaves only ~${rxPct}% at the RX antenna.
+            Shorten the path slider, or improve the match to radiate more.`;
         }
         $("lifeCaption").innerHTML = story;
+      }
+
+      function drawDipole(ctxA, x, y, half, color = "#e8eef2", tip = "#ff8a3d") {
+        ctxA.strokeStyle = color;
+        ctxA.lineWidth = 4;
+        ctxA.lineCap = "round";
+        ctxA.beginPath();
+        ctxA.moveTo(x, y - half);
+        ctxA.lineTo(x, y + half);
+        ctxA.stroke();
+        ctxA.strokeStyle = tip;
+        ctxA.lineWidth = 2;
+        ctxA.beginPath();
+        ctxA.moveTo(x - 11, y - half);
+        ctxA.lineTo(x + 11, y - half);
+        ctxA.moveTo(x - 11, y + half);
+        ctxA.lineTo(x + 11, y + half);
+        ctxA.stroke();
       }
 
       /* —— Real-life: standing wave on coax —— */
@@ -884,7 +1169,7 @@
         ctxL.fillText("green: voltage · orange: |V| envelope (VSWR shape)", left, h - 12);
       }
 
-      /* —— Real-life: antenna radiates accepted power —— */
+      /* —— Link: TX ant (your Z) → free space → RX ant → RX radio —— */
       function drawAntViz(c, now) {
         const w = antCanvas.width;
         const h = antCanvas.height;
@@ -897,90 +1182,189 @@
         ctxA.fillStyle = bg;
         ctxA.fillRect(0, 0, w, h);
 
-        const g2 = Math.min(1, c.gMag * c.gMag);
-        const delivered = Math.max(0, 1 - g2);
+        const { g2, radiated, d, rx } = linkLevels(c);
         const t = now / 1000;
+        const fieldAmp = Math.sqrt(Math.max(0, rx)); // E-field ~ sqrt(power)
 
-        // Radio / TX on left
-        const txX = 70;
-        const txY = h * 0.55;
+        // Positions stretch slightly with distance for storytelling
+        const txRadioX = 48;
+        const txAntX = 150;
+        const span = 220 + (d - 1) * 18; // air gap grows a bit with d
+        const rxAntX = Math.min(w - 150, txAntX + span);
+        const rxRadioX = Math.min(w - 48, rxAntX + 100);
+        const midY = h * 0.46;
+
+        // Ground / dashed path line
+        ctxA.strokeStyle = "rgba(90,140,170,0.25)";
+        ctxA.setLineDash([6, 6]);
+        ctxA.beginPath();
+        ctxA.moveTo(txAntX + 20, midY);
+        ctxA.lineTo(rxAntX - 20, midY);
+        ctxA.stroke();
+        ctxA.setLineDash([]);
+        ctxA.fillStyle = "rgba(180,210,230,0.45)";
+        ctxA.font = "10px IBM Plex Mono, monospace";
+        ctxA.fillText(`free space · d = ${fmt(d, 1)}`, (txAntX + rxAntX) / 2 - 48, midY + 78);
+
+        // —— TX radio + coax ——
         ctxA.fillStyle = "#1a8f5c";
-        roundRect(ctxA, txX - 28, txY - 22, 56, 44, 8);
+        roundRect(ctxA, txRadioX - 24, midY - 20, 48, 40, 7);
         ctxA.fill();
         ctxA.fillStyle = "#fff";
-        ctxA.font = "bold 12px Outfit, sans-serif";
-        ctxA.fillText("Radio", txX - 18, txY + 4);
+        ctxA.font = "bold 10px Outfit, sans-serif";
+        ctxA.fillText("TX", txRadioX - 8, midY + 4);
 
-        // Feedline
-        const antX = w * 0.58;
-        const antY = h * 0.55;
-        ctxA.strokeStyle = "rgba(120,170,200,0.7)";
-        ctxA.lineWidth = 4;
+        ctxA.strokeStyle = "rgba(120,170,200,0.75)";
+        ctxA.lineWidth = 3;
         ctxA.beginPath();
-        ctxA.moveTo(txX + 28, txY);
-        ctxA.lineTo(antX - 8, antY);
+        ctxA.moveTo(txRadioX + 24, midY);
+        ctxA.lineTo(txAntX - 6, midY);
         ctxA.stroke();
 
-        // Forward power pulse (green dots moving toward antenna)
-        for (let i = 0; i < 5; i++) {
-          const u = ((t * 0.35 + i * 0.2) % 1);
-          const x = txX + 28 + u * (antX - 8 - txX - 28);
+        // Forward / reflected on TX coax
+        for (let i = 0; i < 4; i++) {
+          const u = ((t * 0.4 + i * 0.25) % 1);
+          const x = txRadioX + 24 + u * (txAntX - 6 - txRadioX - 24);
           ctxA.beginPath();
-          ctxA.arc(x, txY, 3.5, 0, Math.PI * 2);
-          ctxA.fillStyle = `rgba(45, 212, 168, ${0.35 + 0.55 * delivered})`;
+          ctxA.arc(x, midY - 1, 3, 0, Math.PI * 2);
+          ctxA.fillStyle = `rgba(45, 212, 168, ${0.4 + 0.5 * radiated})`;
           ctxA.fill();
         }
-
-        // Reflected pulses (copper) back toward radio — speed/opacity from |Γ|²
-        if (g2 > 0.01) {
-          for (let i = 0; i < 4; i++) {
-            const u = ((t * 0.35 + i * 0.25) % 1);
-            const x = antX - 8 - u * (antX - 8 - txX - 28);
+        if (g2 > 0.02) {
+          for (let i = 0; i < 3; i++) {
+            const u = ((t * 0.4 + i * 0.3) % 1);
+            const x = txAntX - 6 - u * (txAntX - 6 - txRadioX - 24);
             ctxA.beginPath();
-            ctxA.arc(x, txY + 8, 3 + g2 * 2, 0, Math.PI * 2);
-            ctxA.fillStyle = `rgba(196, 92, 38, ${0.25 + 0.7 * g2})`;
+            ctxA.arc(x, midY + 8, 2.5 + g2 * 2, 0, Math.PI * 2);
+            ctxA.fillStyle = `rgba(196, 92, 38, ${0.3 + 0.65 * g2})`;
             ctxA.fill();
           }
         }
 
-        // Dipole
-        ctxA.strokeStyle = "#e8eef2";
-        ctxA.lineWidth = 4;
-        ctxA.lineCap = "round";
-        ctxA.beginPath();
-        ctxA.moveTo(antX, antY - 50);
-        ctxA.lineTo(antX, antY + 50);
-        ctxA.stroke();
-        ctxA.strokeStyle = "#ff8a3d";
-        ctxA.lineWidth = 2;
-        ctxA.beginPath();
-        ctxA.moveTo(antX - 12, antY - 50);
-        ctxA.lineTo(antX + 12, antY - 50);
-        ctxA.moveTo(antX - 12, antY + 50);
-        ctxA.lineTo(antX + 12, antY + 50);
-        ctxA.stroke();
+        // TX dipole — "YOUR antenna" (Z from Smith)
+        drawDipole(ctxA, txAntX, midY, 52);
+        ctxA.fillStyle = "#ff8a3d";
+        ctxA.font = "bold 10px Outfit, sans-serif";
+        ctxA.fillText("YOUR ant", txAntX - 28, midY - 64);
+        ctxA.fillStyle = "rgba(180,210,230,0.7)";
+        ctxA.font = "9px IBM Plex Mono, monospace";
+        ctxA.fillText("Z from Smith", txAntX - 32, midY + 72);
+        ctxA.fillText(`radiate ${fmt(radiated * 100, 0)}%`, txAntX - 28, midY + 84);
 
-        // Radiation arcs — strength from delivered power
-        const rings = 4;
-        for (let i = 0; i < rings; i++) {
-          const phase = (t * 1.2 + i * 0.55) % 2.2;
-          const rad = 30 + phase * 55;
-          const alpha = Math.max(0, (1 - phase / 2.2) * delivered);
+        // Propagating wavefronts (amplitude from radiated, fade with distance)
+        const airL = txAntX + 24;
+        const airR = rxAntX - 24;
+        for (let i = 0; i < 7; i++) {
+          const u = ((t * 0.22 + i / 7) % 1);
+          const x = airL + u * (airR - airL);
+          // amplitude falls along path and with overall field
+          const local = fieldAmp * (1 - 0.35 * u) * Math.max(0.05, radiated);
+          const amp = 8 + 28 * local;
           ctxA.beginPath();
-          ctxA.arc(antX, antY, rad, -Math.PI * 0.65, -Math.PI * 0.35);
-          ctxA.strokeStyle = `rgba(45, 212, 168, ${alpha * 0.85})`;
-          ctxA.lineWidth = 2 + delivered * 2;
-          ctxA.stroke();
-          ctxA.beginPath();
-          ctxA.arc(antX, antY, rad, Math.PI * 0.35, Math.PI * 0.65);
+          ctxA.moveTo(x, midY - amp);
+          ctxA.quadraticCurveTo(x + 6, midY, x, midY + amp);
+          ctxA.strokeStyle = `rgba(45, 212, 168, ${0.15 + 0.75 * local})`;
+          ctxA.lineWidth = 1.5 + 2 * local;
           ctxA.stroke();
         }
 
-        // Status chip
-        ctxA.font = "11px IBM Plex Mono, monospace";
-        ctxA.fillStyle = "rgba(180,210,230,0.8)";
-        ctxA.fillText(`radiated ∝ 1−|Γ|² = ${fmt(delivered * 100, 1)}%`, 16, h - 14);
-        ctxA.fillText(`reflected ∝ |Γ|² = ${fmt(g2 * 100, 1)}%`, w - 210, h - 14);
+        // TX radiation arcs
+        for (let i = 0; i < 3; i++) {
+          const phase = (t * 1.1 + i * 0.5) % 1.8;
+          const rad = 18 + phase * 36;
+          const alpha = Math.max(0, (1 - phase / 1.8) * radiated);
+          ctxA.beginPath();
+          ctxA.arc(txAntX, midY, rad, -0.7, 0.7);
+          ctxA.strokeStyle = `rgba(45, 212, 168, ${alpha * 0.85})`;
+          ctxA.lineWidth = 2;
+          ctxA.stroke();
+        }
+
+        // —— RX dipole (second antenna) ——
+        drawDipole(ctxA, rxAntX, midY, 52, "#e8eef2", "#2dd4a8");
+        ctxA.fillStyle = "#2dd4a8";
+        ctxA.font = "bold 10px Outfit, sans-serif";
+        ctxA.fillText("2nd ant (RX)", rxAntX - 34, midY - 64);
+        ctxA.fillStyle = "rgba(180,210,230,0.7)";
+        ctxA.font = "9px IBM Plex Mono, monospace";
+        ctxA.fillText("captures E-field", rxAntX - 36, midY + 72);
+
+        // Induced voltage pulse on RX element (visual: glow + oscillating charge)
+        const induc = fieldAmp * (0.55 + 0.45 * Math.sin(t * 10));
+        ctxA.beginPath();
+        ctxA.arc(rxAntX, midY, 5 + induc * 6, 0, Math.PI * 2);
+        ctxA.fillStyle = `rgba(45, 212, 168, ${0.15 + 0.55 * fieldAmp})`;
+        ctxA.fill();
+        // small "V_ind" sparks toward RX feed
+        if (rx > 0.02) {
+          ctxA.strokeStyle = `rgba(45, 212, 168, ${0.35 + 0.55 * fieldAmp})`;
+          ctxA.lineWidth = 2;
+          ctxA.beginPath();
+          ctxA.moveTo(rxAntX + 6, midY);
+          ctxA.lineTo(rxAntX + 28, midY - 4 + Math.sin(t * 12) * 3);
+          ctxA.stroke();
+        }
+
+        // RX coax → RX radio
+        ctxA.strokeStyle = "rgba(120,170,200,0.75)";
+        ctxA.lineWidth = 3;
+        ctxA.beginPath();
+        ctxA.moveTo(rxAntX + 6, midY);
+        ctxA.lineTo(rxRadioX - 24, midY);
+        ctxA.stroke();
+
+        // Power flowing into RX radio
+        if (rx > 0.02) {
+          for (let i = 0; i < 4; i++) {
+            const u = ((t * 0.45 + i * 0.25) % 1);
+            const x = rxAntX + 8 + u * (rxRadioX - 24 - rxAntX - 8);
+            ctxA.beginPath();
+            ctxA.arc(x, midY, 2.5 + fieldAmp * 2, 0, Math.PI * 2);
+            ctxA.fillStyle = `rgba(45, 212, 168, ${0.25 + 0.7 * rx})`;
+            ctxA.fill();
+          }
+        }
+
+        let rxColor = "#c45c26";
+        let rxLabel = "NO SIGNAL";
+        if (rx >= 0.7) { rxColor = "#1a8f5c"; rxLabel = "STRONG"; }
+        else if (rx >= 0.35) { rxColor = "#2dd4a8"; rxLabel = "GOOD"; }
+        else if (rx >= 0.12) { rxColor = "#e8c36a"; rxLabel = "WEAK"; }
+        else if (rx > 0.02) { rxColor = "#ff8a3d"; rxLabel = "NOISY"; }
+
+        ctxA.fillStyle = "#152636";
+        roundRect(ctxA, rxRadioX - 30, midY - 34, 60, 68, 8);
+        ctxA.fill();
+        ctxA.strokeStyle = rxColor;
+        ctxA.lineWidth = 2;
+        roundRect(ctxA, rxRadioX - 30, midY - 34, 60, 68, 8);
+        ctxA.stroke();
+        ctxA.fillStyle = "#fff";
+        ctxA.font = "bold 11px Outfit, sans-serif";
+        ctxA.fillText("RX", rxRadioX - 10, midY - 16);
+
+        const bars = 5;
+        const filled = Math.round(rx * bars);
+        for (let i = 0; i < bars; i++) {
+          const bh = 7 + i * 4;
+          const bx = rxRadioX - 16 + i * 8;
+          const by = midY + 20 - bh;
+          ctxA.fillStyle = i < filled ? rxColor : "rgba(180,210,230,0.15)";
+          ctxA.fillRect(bx, by, 5, bh);
+        }
+        ctxA.fillStyle = rxColor;
+        ctxA.font = "bold 9px IBM Plex Mono, monospace";
+        ctxA.fillText(rxLabel, rxRadioX - 20, midY + 32);
+
+        // Equation strip
+        ctxA.fillStyle = "rgba(180,210,230,0.7)";
+        ctxA.font = "10px IBM Plex Mono, monospace";
+        ctxA.fillText(
+          `P_RX ∝ (1−|Γ|²) / d²  =  ${fmt(radiated, 2)} / ${fmt(d * d, 1)}  →  ${fmt(rx * 100, 0)}%`,
+          14,
+          h - 14
+        );
+        ctxA.fillText("Smith changes TX match only", w - 200, h - 14);
       }
 
       function roundRect(ctxR, x, y, w, h, r) {
@@ -1083,15 +1467,14 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         ctx.fill();
 
         // constant resistance circles: center (r/(r+1), 0), radius 1/(r+1)
-        const rVals = [0, 0.2, 0.5, 1, 2, 5];
-        rVals.forEach((r) => {
+        R_GRID.forEach((r) => {
           const rc = R / (r + 1);
           const ccx = cx + (r / (r + 1)) * R;
           drawCircle(ccx, cy, rc, "rgba(74, 155, 184, 0.55)", r === 0 || r === 1 ? 1.4 : 1);
         });
 
         // constant reactance arcs: center (1, 1/x), radius |1/x|
-        const xVals = [0.2, 0.5, 1, 2, 5];
+        const xVals = X_GRID.filter((x) => x > 0);
         xVals.forEach((x) => {
           [x, -x].forEach((xv) => {
             const rad = R / Math.abs(xv);
@@ -1153,7 +1536,32 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         ctx.fillText("−j", cx + 6, cy + R - 8);
         ctx.fillText("0", cx + 6, cy - 8);
 
+        // snap dots at r×x intersections
+        if (state.snapToGrid) {
+          ctx.fillStyle = "rgba(232, 195, 106, 0.55)";
+          for (const pt of SNAP_POINTS) {
+            const p = gammaToXY(pt.gRe, pt.gIm, geom);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
         return geom;
+      }
+
+      function nearestSnap(gRe, gIm, geom) {
+        const thresh2 = (SNAP_PX / geom.R) ** 2;
+        let best = null;
+        let bestD2 = thresh2;
+        for (const pt of SNAP_POINTS) {
+          const d2 = (pt.gRe - gRe) ** 2 + (pt.gIm - gIm) ** 2;
+          if (d2 < bestD2) {
+            bestD2 = d2;
+            best = pt;
+          }
+        }
+        return best;
       }
 
       function drawMarker(c, geom) {
@@ -1169,8 +1577,8 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = "#ff8a3d";
+        ctx.arc(p.x, p.y, state.snapped ? 7.5 : 6, 0, Math.PI * 2);
+        ctx.fillStyle = state.snapped ? "#e8c36a" : "#ff8a3d";
         ctx.fill();
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 1.5;
@@ -1326,6 +1734,28 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
           gIm /= mag;
           mag = 1;
         }
+
+        const freeDrag = evt.shiftKey || !state.snapToGrid;
+        const snap = freeDrag ? null : nearestSnap(gRe, gIm, geom);
+        state.snapped = Boolean(snap);
+
+        if (snap) {
+          // Land exactly on r ∩ x so Z inputs show clean grid values
+          state.r = snap.r * state.z0;
+          state.x = snap.x * state.z0;
+          if (state.mode !== "z") {
+            state.mode = "z";
+            $("modeZ").classList.add("active");
+            $("modeG").classList.remove("active");
+            $("modeZ").setAttribute("aria-pressed", "true");
+            $("modeG").setAttribute("aria-pressed", "false");
+            $("zInputs").hidden = false;
+            $("gInputs").hidden = true;
+          }
+          update(true);
+          return;
+        }
+
         const ang = (Math.atan2(gIm, gRe) * 180) / Math.PI;
         setMode("g");
         syncPair("gMag", "gMagRange", mag, { min: 0, max: 1 });
@@ -1333,6 +1763,22 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         syncPair("z0g", "z0gRange", state.z0, { min: 0.1, max: 150 });
         update(true);
       }
+
+      $("snapGrid").addEventListener("change", () => {
+        state.snapToGrid = $("snapGrid").checked;
+        if (!state.snapToGrid) state.snapped = false;
+        update();
+      });
+
+      const syncPathDist = (v) => {
+        const d = Math.min(10, Math.max(1, Number(v) || 3));
+        state.pathDist = d;
+        $("pathDist").value = d;
+        $("pathDistRange").value = d;
+        update();
+      };
+      $("pathDist").addEventListener("input", () => syncPathDist($("pathDist").value));
+      $("pathDistRange").addEventListener("input", () => syncPathDist($("pathDistRange").value));
 
       canvas.addEventListener("pointerdown", (e) => {
         state.dragging = true;
@@ -1363,7 +1809,7 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
           ctx.stroke();
           ctx.beginPath();
           ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = "#ff8a3d";
+          ctx.fillStyle = state.snapped ? "#e8c36a" : "#ff8a3d";
           ctx.fill();
           ctx.strokeStyle = "#fff";
           ctx.lineWidth = 1.5;
