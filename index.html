@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+
     :root {
       --ink: #102033;
       --ink-soft: #3a5168;
@@ -21,628 +22,472 @@
       --signal: #1a8f5c;
       --warn: #b45309;
       --chart-bg: #0a1624;
-      --chart-grid: #1e3a52;
-      --chart-r: #4a9bb8;
-      --chart-x: #7a6a9a;
       --marker: #ff8a3d;
       --glow: rgba(13, 124, 124, 0.18);
-      --radius: 14px;
-      --shadow: 0 18px 50px rgba(16, 32, 51, 0.08);
+      --radius: 10px;
       --font: "Outfit", system-ui, sans-serif;
       --mono: "IBM Plex Mono", ui-monospace, monospace;
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
+      overflow: hidden;
+    }
+    body {
       font-family: var(--font);
       color: var(--ink);
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(13, 124, 124, 0.12), transparent 55%),
-        radial-gradient(900px 500px at 100% 0%, rgba(196, 92, 38, 0.08), transparent 50%),
-        linear-gradient(180deg, #f7fafc 0%, var(--paper) 40%, #eef3f7 100%);
-      min-height: 100vh;
+        radial-gradient(900px 420px at 8% -8%, rgba(13, 124, 124, 0.1), transparent 55%),
+        linear-gradient(180deg, #f7fafc 0%, var(--paper) 100%);
     }
 
     .wrap {
-      max-width: 1480px;
+      height: 100dvh;
+      max-width: 1680px;
       margin: 0 auto;
-      padding: 1rem 1.25rem 2.5rem;
+      padding: 0.45rem 0.7rem 0.5rem;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 0.45rem;
     }
 
     header.hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 1.25rem;
-      align-items: end;
-      margin-bottom: 1rem;
-      padding: 0.25rem 0 0.9rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.15rem 0 0.35rem;
       border-bottom: 1px solid var(--line);
-      animation: rise 0.7s ease both;
+      min-height: 0;
     }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: none; }
-    }
-
     .brand {
-      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-size: 1.35rem;
       font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 0.95;
+      letter-spacing: -0.03em;
       margin: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
     }
     .brand span {
       color: var(--teal);
-      display: block;
-      font-size: 0.42em;
-      letter-spacing: 0.18em;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       font-weight: 600;
-      margin-bottom: 0.55rem;
     }
-    .lede {
-      margin: 0.85rem 0 0;
-      color: var(--ink-soft);
-      font-size: 1.05rem;
-      max-width: 36ch;
-      line-height: 1.45;
-    }
+    .lede { display: none; }
     .hero-aside {
-      text-align: right;
+      font-size: 0.78rem;
       color: var(--ink-soft);
-      font-size: 0.92rem;
-      line-height: 1.5;
+      max-width: 52ch;
+      line-height: 1.35;
+      text-align: right;
     }
-    .hero-aside strong { color: var(--ink); font-weight: 600; }
-    .hero-aside code {
-      font-family: var(--mono);
-      font-size: 0.85em;
-      background: var(--paper-2);
-      padding: 0.12em 0.4em;
-      border-radius: 4px;
-    }
+    .hero-aside strong { color: var(--ink); }
 
-    .layout {
+    .dashboard {
       display: grid;
-      grid-template-columns: minmax(240px, 280px) minmax(320px, 1fr) minmax(240px, 280px);
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .chart-panel .panel-body {
-      padding: 0.85rem;
-    }
-    .chart-shell {
-      background: var(--chart-bg);
-      border-radius: 12px;
-      padding: 0.65rem;
-      position: relative;
-    }
-
-    /* Full-width emitter/receiver band — not cramped beside Smith */
-    .playground {
-      margin-top: 1rem;
-      animation: rise 0.85s ease both;
-      animation-delay: 0.1s;
-    }
-    .playground .panel-body {
-      padding: 1rem 1.1rem 1.15rem;
-    }
-    .playground-grid {
-      display: grid;
-      grid-template-columns: minmax(260px, 0.85fr) minmax(420px, 1.35fr);
-      gap: 1rem;
-      align-items: stretch;
-    }
-    .life-shell {
-      background: var(--chart-bg);
-      border-radius: 12px;
-      padding: 0.7rem 0.75rem 0.65rem;
-      display: flex;
-      flex-direction: column;
+      grid-template-columns: minmax(200px, 240px) minmax(260px, 0.95fr) minmax(360px, 1.35fr);
+      gap: 0.55rem;
       min-height: 0;
       height: 100%;
     }
-    .life-shell .life-title {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(180, 210, 230, 0.8);
-      font-family: var(--mono);
-      margin: 0 0 0.5rem 0.1rem;
-    }
-    .life-shell canvas {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-    }
-    .life-shell.playground-main canvas {
-      min-height: 280px;
-    }
-    .playground-meta {
-      display: grid;
-      grid-template-columns: minmax(280px, 0.9fr) 1.1fr;
-      gap: 1rem 1.25rem;
-      margin-top: 1rem;
-      align-items: start;
-    }
-    .life-caption {
-      margin: 0;
-      font-size: 0.9rem;
-      color: var(--ink-soft);
-      line-height: 1.5;
-    }
-    .life-caption strong { color: var(--ink); }
-    .power-bars {
-      display: grid;
-      gap: 0.45rem;
-    }
-    .power-bar {
-      display: grid;
-      grid-template-columns: 7.5rem 1fr 3.5rem;
-      gap: 0.45rem;
-      align-items: center;
-      font-size: 0.75rem;
-      font-family: var(--mono);
-      color: var(--ink-soft);
-    }
-    .power-bar .track {
-      height: 0.55rem;
-      background: var(--paper-2);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .power-bar .fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.25s ease;
-    }
-    .power-bar .fill.fwd { background: var(--teal); }
-    .power-bar .fill.ref { background: var(--copper); }
-    .power-bar .fill.acc { background: var(--signal); }
-
-    .link-chain {
-      list-style: none;
-      margin: 0 0 0.65rem;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.4rem;
-    }
-    .link-chain li {
-      background: rgba(12, 26, 40, 0.55);
-      border: 1px solid rgba(90, 140, 170, 0.35);
-      border-radius: 8px;
-      padding: 0.45rem 0.4rem;
-      text-align: center;
-      font-size: 0.7rem;
-      line-height: 1.3;
-      color: rgba(180, 210, 230, 0.75);
-      font-family: var(--mono);
-    }
-    .link-chain li strong {
-      display: block;
-      color: #2dd4a8;
-      font-size: 0.76rem;
-      margin-bottom: 0.2rem;
-      font-family: Outfit, sans-serif;
-    }
-    .link-chain li.active {
-      border-color: rgba(45, 212, 168, 0.7);
-      box-shadow: 0 0 0 1px rgba(45, 212, 168, 0.25);
-    }
-    .link-chain li.dim {
-      opacity: 0.45;
-      border-color: rgba(196, 92, 38, 0.45);
-    }
-    .link-chain li.dim strong { color: #ff8a3d; }
-    .path-dist {
-      margin: 0.65rem 0.1rem 0;
-      color: rgba(180, 210, 230, 0.85);
-      font-size: 0.72rem;
-      font-family: var(--mono);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .path-dist .row {
-      display: grid;
-      grid-template-columns: 1fr 4.2rem auto;
-      gap: 0.4rem;
-      align-items: center;
-      margin-top: 0.35rem;
-    }
-    .path-dist input[type="number"] {
-      width: 100%;
-      background: rgba(7, 16, 24, 0.8);
-      border: 1px solid rgba(90, 140, 170, 0.4);
-      color: #e8eef2;
-      border-radius: 6px;
-      padding: 0.35rem 0.4rem;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-    }
-    .path-dist .unit-hint {
-      color: rgba(180, 210, 230, 0.55);
-      font-size: 0.75rem;
-    }
-    .path-hint {
-      margin: 0.4rem 0.1rem 0.1rem;
-      color: rgba(180, 210, 230, 0.65);
-      font-size: 0.78rem;
-      line-height: 1.4;
-    }
 
     .panel {
-      background: rgba(255, 255, 255, 0.72);
+      background: rgba(255, 255, 255, 0.78);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
       overflow: hidden;
-      animation: rise 0.8s ease both;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
-    .panel:nth-child(2) { animation-delay: 0.06s; }
-    .panel:nth-child(3) { animation-delay: 0.12s; }
-
     .panel h2 {
       margin: 0;
-      padding: 0.9rem 1rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--teal-deep);
       border-bottom: 1px solid var(--line);
       background: linear-gradient(90deg, rgba(13, 124, 124, 0.08), transparent);
+      flex: 0 0 auto;
     }
-
-    .panel-body { padding: 1rem; }
+    .panel-body {
+      padding: 0.55rem 0.65rem 0.6rem;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+    }
 
     label.field {
       display: grid;
-      gap: 0.35rem;
-      margin-bottom: 0.9rem;
-      font-size: 0.86rem;
+      gap: 0.2rem;
+      margin-bottom: 0.55rem;
+      font-size: 0.74rem;
       color: var(--ink-soft);
     }
     label.field .row {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 0.5rem;
+      gap: 0.35rem;
       align-items: center;
     }
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--teal);
-    }
+    input[type="range"] { width: 100%; accent-color: var(--teal); }
     input[type="number"] {
-      width: 5.5rem;
+      width: 4.6rem;
       font-family: var(--mono);
-      font-size: 0.9rem;
-      padding: 0.4rem 0.5rem;
+      font-size: 0.78rem;
+      padding: 0.28rem 0.35rem;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 6px;
       background: #fff;
       color: var(--ink);
-    }
-    input[type="number"]:focus {
-      outline: 2px solid rgba(13, 124, 124, 0.35);
-      border-color: var(--teal);
     }
 
     .mode-toggle {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
+      gap: 0.3rem;
+      margin-bottom: 0.55rem;
     }
     .mode-toggle button,
     .presets button,
-    .ghost-btn {
+    .dist-presets button,
+    .freq-presets button {
       font-family: var(--font);
-      font-size: 0.88rem;
+      font-size: 0.75rem;
       font-weight: 550;
       border: 1px solid var(--line);
       background: #fff;
       color: var(--ink);
-      padding: 0.55rem 0.7rem;
-      border-radius: 10px;
+      padding: 0.35rem 0.4rem;
+      border-radius: 7px;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
     }
     .mode-toggle button.active {
       background: var(--teal);
       border-color: var(--teal);
       color: #fff;
     }
-    .mode-toggle button:hover,
-    .presets button:hover,
-    .ghost-btn:hover {
-      border-color: var(--teal);
-      transform: translateY(-1px);
-    }
-
-    .presets {
+    .presets, .dist-presets, .freq-presets {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.25rem;
+      gap: 0.28rem;
+      margin-top: 0.2rem;
     }
-    .presets button {
-      font-size: 0.78rem;
-      padding: 0.4rem 0.55rem;
+    .presets button, .dist-presets button, .freq-presets button {
+      font-size: 0.68rem;
       font-family: var(--mono);
+      padding: 0.28rem 0.4rem;
     }
-
+    .dist-presets button.active,
+    .freq-presets button.active {
+      background: var(--teal-deep);
+      border-color: var(--teal-deep);
+      color: #fff;
+    }
     .hint {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--ink-soft);
-      margin: 0.4rem 0 0;
-      line-height: 1.4;
+      margin: 0.25rem 0 0;
+      line-height: 1.3;
+    }
+    .section-label {
+      margin: 0.55rem 0 0.3rem;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+      font-weight: 600;
+      border-top: 1px solid var(--line);
+      padding-top: 0.45rem;
     }
 
+    .chart-panel .panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.45rem;
+    }
+    .chart-shell {
+      background: var(--chart-bg);
+      border-radius: 8px;
+      padding: 0.35rem;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     canvas#smith {
-      width: 100%;
-      height: auto;
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 1;
       display: block;
       cursor: crosshair;
-      border-radius: 8px;
+      border-radius: 6px;
       touch-action: none;
     }
     .chart-legend {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.85rem;
-      margin-top: 0.75rem;
-      font-size: 0.78rem;
+      gap: 0.45rem 0.7rem;
+      font-size: 0.65rem;
       color: var(--ink-soft);
       font-family: var(--mono);
+      flex: 0 0 auto;
     }
     .chart-legend i {
       display: inline-block;
-      width: 0.7rem;
-      height: 0.7rem;
+      width: 0.55rem;
+      height: 0.55rem;
       border-radius: 50%;
-      margin-right: 0.35rem;
+      margin-right: 0.25rem;
       vertical-align: -0.05rem;
     }
     .snap-toggle kbd {
       font-family: var(--mono);
-      font-size: 0.72rem;
-      padding: 0.05rem 0.35rem;
+      font-size: 0.65rem;
+      padding: 0.05rem 0.28rem;
       border: 1px solid var(--line);
-      border-radius: 4px;
-      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
     }
 
     .metrics {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.55rem;
+      gap: 0.3rem;
+      margin-top: 0.25rem;
     }
     .metric {
       background: var(--paper);
       border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 0.65rem 0.75rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .metric:hover {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px var(--glow);
+      border-radius: 7px;
+      padding: 0.35rem 0.45rem;
     }
     .metric .k {
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
+      font-size: 0.58rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--ink-soft);
-      margin-bottom: 0.25rem;
     }
     .metric .v {
       font-family: var(--mono);
-      font-size: 0.95rem;
+      font-size: 0.78rem;
       font-weight: 550;
-      color: var(--ink);
       word-break: break-all;
     }
     .metric .v.good { color: var(--signal); }
     .metric .v.mid { color: var(--warn); }
     .metric .v.bad { color: var(--copper); }
 
-    .calc-steps {
-      display: grid;
-      gap: 0.65rem;
+    .calc-fold, .lesson {
+      margin-top: 0.4rem;
+      border-top: 1px solid var(--line);
+      padding-top: 0.35rem;
     }
+    .calc-fold summary, .lesson summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--teal-deep);
+      list-style: none;
+      font-size: 0.74rem;
+    }
+    .calc-fold summary::-webkit-details-marker,
+    .lesson summary::-webkit-details-marker { display: none; }
+    .calc-fold summary::before,
+    .lesson summary::before { content: "▸ "; color: var(--copper); }
+    .calc-fold[open] summary::before,
+    .lesson[open] summary::before { content: "▾ "; }
+    .calc-steps { display: grid; gap: 0.4rem; margin-top: 0.4rem; }
     .step {
       border-left: 3px solid var(--teal);
-      padding: 0.45rem 0 0.45rem 0.75rem;
+      padding: 0.25rem 0 0.25rem 0.5rem;
       background: linear-gradient(90deg, rgba(13, 124, 124, 0.06), transparent);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 6px 6px 0;
     }
     .step .n {
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--teal-deep);
       font-weight: 600;
     }
     .step .eq {
       font-family: var(--mono);
-      font-size: 0.82rem;
-      margin: 0.25rem 0;
-      line-height: 1.45;
-    }
-    .step .note {
-      font-size: 0.78rem;
-      color: var(--ink-soft);
-      margin: 0;
+      font-size: 0.7rem;
+      margin: 0.15rem 0;
       line-height: 1.35;
     }
-
-    details.lesson {
-      margin-top: 0.85rem;
-      border-top: 1px solid var(--line);
-      padding-top: 0.75rem;
-    }
-    details.lesson summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--teal-deep);
-      list-style: none;
-    }
-    details.lesson summary::-webkit-details-marker { display: none; }
-    details.lesson summary::before {
-      content: "▸ ";
-      color: var(--copper);
-    }
-    details.lesson[open] summary::before { content: "▾ "; }
-    details.lesson p, details.lesson ul {
-      font-size: 0.86rem;
+    .step .note {
+      font-size: 0.68rem;
       color: var(--ink-soft);
-      line-height: 1.5;
-    }
-    details.lesson ul { padding-left: 1.1rem; }
-
-    .lesson-top {
-      margin-bottom: 1rem;
-    }
-    .lesson-top details.lesson-fold {
       margin: 0;
-      border: none;
-      padding: 0;
     }
-    .lesson-top details.lesson-fold summary {
-      cursor: pointer;
-      list-style: none;
-      padding: 0.85rem 1rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
+
+    .playground {
+      min-height: 0;
+    }
+    .playground .panel-body {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1.15fr) auto minmax(0, 0.7fr);
+      gap: 0.4rem;
+      padding: 0.45rem;
+    }
+    .life-shell {
+      background: var(--chart-bg);
+      border-radius: 8px;
+      padding: 0.4rem 0.45rem 0.35rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .life-shell .life-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--teal-deep);
-      font-weight: 600;
-      border-bottom: 1px solid transparent;
+      color: rgba(180, 210, 230, 0.8);
+      font-family: var(--mono);
+      margin: 0 0 0.3rem 0.05rem;
+      flex: 0 0 auto;
     }
-    .lesson-top details.lesson-fold summary::-webkit-details-marker { display: none; }
-    .lesson-top details.lesson-fold summary::before {
-      content: "▸ ";
-      color: var(--copper);
-      letter-spacing: 0;
-      text-transform: none;
+    .life-shell canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: block;
+      border-radius: 6px;
+      flex: 1 1 auto;
     }
-    .lesson-top details.lesson-fold[open] summary {
-      border-bottom-color: var(--line);
-    }
-    .lesson-top details.lesson-fold[open] summary::before { content: "▾ "; }
-    .lesson-intro {
-      padding: 0 1rem 1rem;
-    }
-    .lesson-intro p {
-      margin: 0 0 0.65rem;
-      font-size: 0.9rem;
-      color: var(--ink-soft);
-      line-height: 1.5;
-    }
-    .lesson-intro ul {
-      margin: 0;
-      padding-left: 1.15rem;
-      font-size: 0.86rem;
-      color: var(--ink-soft);
-      line-height: 1.45;
-    }
-    .lesson-intro li { margin: 0.2rem 0; }
-
-    .results-panel .calc-fold {
-      margin-top: 0.85rem;
-      border-top: 1px solid var(--line);
-      padding-top: 0.65rem;
-    }
-    .results-panel .calc-fold summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--teal-deep);
+    .link-chain {
       list-style: none;
-      font-size: 0.86rem;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.25rem;
+      flex: 0 0 auto;
     }
-    .results-panel .calc-fold summary::-webkit-details-marker { display: none; }
-    .results-panel .calc-fold summary::before {
-      content: "▸ ";
-      color: var(--copper);
+    .link-chain li {
+      background: rgba(12, 26, 40, 0.55);
+      border: 1px solid rgba(90, 140, 170, 0.35);
+      border-radius: 6px;
+      padding: 0.28rem 0.2rem;
+      text-align: center;
+      font-size: 0.58rem;
+      line-height: 1.2;
+      color: rgba(180, 210, 230, 0.7);
+      font-family: var(--mono);
     }
-    .results-panel .calc-fold[open] summary::before { content: "▾ "; }
-    .results-panel .calc-fold .calc-steps {
-      margin-top: 0.75rem;
+    .link-chain li strong {
+      display: block;
+      color: #2dd4a8;
+      font-size: 0.64rem;
+      margin-bottom: 0.1rem;
+      font-family: Outfit, sans-serif;
     }
+    .link-chain li.active {
+      border-color: rgba(45, 212, 168, 0.7);
+    }
+    .link-chain li.dim {
+      opacity: 0.4;
+      border-color: rgba(196, 92, 38, 0.45);
+    }
+    .link-chain li.dim strong { color: #ff8a3d; }
+
+    .playground-meta {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 0.55rem;
+      align-items: start;
+      flex: 0 0 auto;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.4rem 0.5rem;
+    }
+    .life-caption {
+      margin: 0;
+      font-size: 0.74rem;
+      color: var(--ink-soft);
+      line-height: 1.35;
+    }
+    .life-caption strong { color: var(--ink); }
+    .power-bars { display: grid; gap: 0.28rem; }
+    .power-bar {
+      display: grid;
+      grid-template-columns: 6.2rem 1fr 4rem;
+      gap: 0.3rem;
+      align-items: center;
+      font-size: 0.65rem;
+      font-family: var(--mono);
+      color: var(--ink-soft);
+    }
+    .power-bar .track {
+      height: 0.45rem;
+      background: var(--paper-2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .power-bar .fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.2s ease;
+    }
+    .power-bar .fill.fwd { background: var(--teal); }
+    .power-bar .fill.ref { background: var(--copper); }
+    .power-bar .fill.acc { background: var(--signal); }
 
     footer {
-      margin-top: 1.75rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--line);
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem 1.5rem;
       justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.68rem;
       color: var(--ink-soft);
-      font-size: 0.82rem;
+      padding-top: 0.15rem;
     }
     footer a { color: var(--teal-deep); }
 
+    .lesson-top { display: none; }
+
     @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr 1fr; }
-      .panel.chart-panel { grid-column: 1 / -1; order: -1; }
-      .playground-grid { grid-template-columns: 1fr; }
-      .playground-meta { grid-template-columns: 1fr; }
-      header.hero { grid-template-columns: 1fr; }
-      .hero-aside { text-align: left; }
+      html, body { overflow: auto; height: auto; }
+      .wrap { height: auto; min-height: 100dvh; overflow: visible; }
+      .dashboard {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+      }
+      .panel.playground { grid-column: 1 / -1; min-height: 420px; }
     }
     @media (max-width: 700px) {
-      .layout { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: 1fr; }
+      .dashboard { grid-template-columns: 1fr; }
+      .hero-aside { display: none; }
       .link-chain { grid-template-columns: 1fr 1fr; }
-      .link-chain li:last-child { grid-column: 1 / -1; }
+      .playground-meta { grid-template-columns: 1fr; }
     }
+
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="hero">
-      <div>
-        <h1 class="brand"><span>RF learning lab</span>Impedance Lab</h1>
-        <p class="lede">Drag the Smith chart or tune R and X — see Γ on the chart and, beside it, what that means for a coax line and an antenna.</p>
-      </div>
+      <h1 class="brand"><span>RF lab</span>Impedance Lab</h1>
+      <p class="lede">Single-view Smith + link budget</p>
       <div class="hero-aside">
-        <strong>Core idea:</strong> mismatch creates reflection. On a line that becomes a <strong>standing wave</strong>; at an antenna it means less power radiated — so a distant <strong>receiver</strong> hears a weaker signal.
+        Drag the Smith chart to set TX match. Set <strong>real distance (m)</strong> and <strong>frequency</strong> — RX uses Friis free-space path loss.
       </div>
     </header>
 
-    <section class="panel lesson-top">
-      <details class="lesson-fold">
-        <summary>What am I looking at?</summary>
-        <div class="lesson-intro">
-          <p>
-            The Smith chart is the complex plane of Γ = Γ<sub>r</sub> + jΓ<sub>i</sub>.
-            Every passive load with R ≥ 0 lands inside (or on) the unit circle.
-            Drag the orange marker (or use the inputs) to change the <strong>TX antenna load Z</strong>.
-            That decides how much power is radiated into free space.
-            The <strong>second antenna</strong> does not change with your drag — it only captures the field that was radiated, then feeds the RX radio.
-          </p>
-          <ul>
-            <li><strong>Center</strong> — matched TX load, Γ = 0 → max radiation → strong induced voltage at the RX antenna.</li>
-            <li><strong>Right rim</strong> — open circuit (Γ ≈ +1) → almost nothing radiates → RX silent.</li>
-            <li><strong>Left rim</strong> — short circuit (Γ ≈ −1) → same: reflection, not radiation.</li>
-            <li><strong>|Γ|</strong> — larger radius ⇒ more reflection at <em>your</em> antenna ⇒ weaker waves for the second antenna.</li>
-            <li><strong>Path distance</strong> — free-space falloff ~1/d²; even a good match fades if the RX antenna is far.</li>
-          </ul>
-        </div>
-      </details>
-    </section>
-
-    <div class="layout">
-      <!-- Controls -->
+    <div class="dashboard">
+      <!-- Controls: Z + range in one place -->
       <section class="panel">
-        <h2>Inputs</h2>
+        <h2>TX match &amp; range</h2>
         <div class="panel-body">
           <div class="mode-toggle" role="tablist" aria-label="Calculation mode">
             <button type="button" id="modeZ" class="active" aria-pressed="true">Z → Γ</button>
@@ -651,21 +496,21 @@
 
           <div id="zInputs">
             <label class="field">
-              Characteristic impedance Z₀ (Ω)
+              Z₀ (Ω)
               <div class="row">
                 <input type="range" id="z0Range" min="1" max="150" step="0.1" value="50" />
                 <input type="number" id="z0" min="0.1" step="0.1" value="50" />
               </div>
             </label>
             <label class="field">
-              Resistance R (Ω)
+              R (Ω)
               <div class="row">
                 <input type="range" id="rRange" min="0" max="250" step="0.1" value="50" />
                 <input type="number" id="r" min="0" step="0.1" value="50" />
               </div>
             </label>
             <label class="field">
-              Reactance X (Ω)
+              X (Ω)
               <div class="row">
                 <input type="range" id="xRange" min="-250" max="250" step="0.1" value="0" />
                 <input type="number" id="x" step="0.1" value="0" />
@@ -675,21 +520,21 @@
 
           <div id="gInputs" hidden>
             <label class="field">
-              |Γ| magnitude (0…1)
+              |Γ|
               <div class="row">
                 <input type="range" id="gMagRange" min="0" max="1" step="0.001" value="0" />
                 <input type="number" id="gMag" min="0" max="1" step="0.001" value="0" />
               </div>
             </label>
             <label class="field">
-              ∠Γ angle (degrees)
+              ∠Γ (°)
               <div class="row">
                 <input type="range" id="gAngRange" min="-180" max="180" step="0.1" value="0" />
                 <input type="number" id="gAng" min="-180" max="180" step="0.1" value="0" />
               </div>
             </label>
             <label class="field">
-              Reference Z₀ (Ω)
+              Z₀ (Ω)
               <div class="row">
                 <input type="range" id="z0gRange" min="1" max="150" step="0.1" value="50" />
                 <input type="number" id="z0g" min="0.1" step="0.1" value="50" />
@@ -697,105 +542,114 @@
             </label>
           </div>
 
-          <p class="hint" style="margin-bottom:0.55rem">Presets (Z₀ = 50 Ω)</p>
+          <p class="hint" style="margin-bottom:0.3rem">Z presets</p>
           <div class="presets" id="presets">
             <button type="button" data-r="50" data-x="0">Matched</button>
             <button type="button" data-r="0" data-x="0">Short</button>
             <button type="button" data-r="1e9" data-x="0" data-open="1">Open</button>
-            <button type="button" data-r="25" data-x="0">25 Ω</button>
-            <button type="button" data-r="100" data-x="0">100 Ω</button>
-            <button type="button" data-r="50" data-x="50">50+j50</button>
-            <button type="button" data-r="50" data-x="-50">50−j50</button>
+            <button type="button" data-r="36" data-x="0">Dipole</button>
+            <button type="button" data-r="50" data-x="120">Detuned</button>
             <button type="button" data-r="75" data-x="25">75+j25</button>
-            <button type="button" data-r="36" data-x="0">Dipole≈36Ω</button>
-            <button type="button" data-r="50" data-x="120">Detuned ant.</button>
           </div>
-          <p class="hint">Tip: Matched vs Detuned — watch the playground below respond.</p>
+
+          <p class="section-label">Real link</p>
+          <label class="field">
+            Distance d (meters)
+            <div class="row">
+              <input type="range" id="pathDistRange" min="0.5" max="50" step="0.1" value="5" />
+              <input type="number" id="pathDist" min="0.5" max="50" step="0.1" value="5" />
+            </div>
+          </label>
+          <div class="dist-presets" id="distPresets">
+            <button type="button" data-d="0.5">0.5 m</button>
+            <button type="button" data-d="1">1 m</button>
+            <button type="button" data-d="2">2 m</button>
+            <button type="button" data-d="5" class="active">5 m</button>
+            <button type="button" data-d="10">10 m</button>
+            <button type="button" data-d="20">20 m</button>
+            <button type="button" data-d="50">50 m</button>
+          </div>
+
+          <label class="field" style="margin-top:0.55rem">
+            Frequency f (MHz)
+            <div class="row">
+              <input type="range" id="freqRange" min="100" max="6000" step="1" value="2450" />
+              <input type="number" id="freq" min="100" max="6000" step="1" value="2450" />
+            </div>
+          </label>
+          <div class="freq-presets" id="freqPresets">
+            <button type="button" data-f="433">433</button>
+            <button type="button" data-f="868">868</button>
+            <button type="button" data-f="915">915</button>
+            <button type="button" data-f="2450" class="active">2.45 G</button>
+            <button type="button" data-f="5800">5.8 G</button>
+          </div>
+          <p class="hint" id="lambdaHint">λ ≈ 0.122 m · Friis path loss grows with d and f</p>
+
+          <div class="metrics" id="metrics" style="margin-top:0.55rem"></div>
+          <details class="calc-fold">
+            <summary>Step-by-step math</summary>
+            <div class="calc-steps" id="steps"></div>
+          </details>
+          <details class="lesson">
+            <summary>Formulas</summary>
+            <p style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-soft); line-height:1.45">
+              Γ = (z−1)/(z+1)<br />
+              P_rad / P_TX = 1 − |Γ|²<br />
+              FSPL = (4πd / λ)²<br />
+              P_RX / P_TX = GₜGᵣ (λ / 4πd)² (1−|Γ|²)<br />
+              (isotropic Gₜ=Gᵣ=1 · RX matched)
+            </p>
+          </details>
+          <label class="snap-toggle hint" style="display:flex;align-items:center;gap:0.35rem;margin-top:0.45rem;cursor:pointer;user-select:none">
+            <input type="checkbox" id="snapGrid" checked />
+            Snap Smith grid (Shift = free)
+          </label>
         </div>
       </section>
 
-      <!-- Smith chart only -->
+      <!-- Smith -->
       <section class="panel chart-panel">
-        <h2>Smith chart · Γ plane</h2>
+        <h2>Smith chart · TX load</h2>
         <div class="panel-body">
           <div class="chart-shell">
             <canvas id="smith" width="720" height="720" aria-label="Interactive Smith chart"></canvas>
           </div>
           <div class="chart-legend">
-            <span><i style="background:#4a9bb8"></i>constant r</span>
-            <span><i style="background:#7a6a9a"></i>constant x</span>
-            <span><i style="background:#ff8a3d"></i>operating point</span>
-            <span><i style="background:#2dd4a8"></i>|Γ| circle</span>
-            <span><i style="background:#e8c36a"></i>r×x intersections</span>
+            <span><i style="background:#4a9bb8"></i>r</span>
+            <span><i style="background:#7a6a9a"></i>x</span>
+            <span><i style="background:#ff8a3d"></i>Z</span>
+            <span><i style="background:#2dd4a8"></i>|Γ|</span>
           </div>
-          <label class="snap-toggle hint" style="display:flex;align-items:center;gap:0.45rem;margin-top:0.55rem;cursor:pointer;user-select:none">
-            <input type="checkbox" id="snapGrid" checked />
-            Snap to grid intersections (hold <kbd>Shift</kbd> to free-drag)
-          </label>
         </div>
       </section>
 
-      <!-- Results -->
-      <section class="panel results-panel">
-        <h2>Results</h2>
+      <!-- Playground -->
+      <section class="panel playground">
+        <h2>Emitter ↔ receiver · real meters</h2>
         <div class="panel-body">
-          <div class="metrics" id="metrics"></div>
-          <details class="calc-fold">
-            <summary>Step-by-step walkthrough</summary>
-            <div class="calc-steps" id="steps"></div>
-          </details>
-          <details class="lesson">
-            <summary>Formulas used here</summary>
-            <p style="font-family:var(--mono); font-size:0.8rem;">
-              z = Z<sub>L</sub> / Z₀<br />
-              Γ = (z − 1) / (z + 1)<br />
-              Z<sub>L</sub> = Z₀ (1 + Γ) / (1 − Γ)<br />
-              VSWR = (1 + |Γ|) / (1 − |Γ|)<br />
-              RL = −20 log₁₀(|Γ|) dB<br />
-              ML = −10 log₁₀(1 − |Γ|²) dB<br />
-              Relative RX level ∝ (1 − |Γ|²) / d²
-            </p>
-          </details>
+          <ol class="link-chain" id="linkChain" aria-label="Signal path">
+            <li><strong>1 · You</strong><span>Smith Z</span></li>
+            <li><strong>2 · TX</strong><span>1−|Γ|²</span></li>
+            <li><strong>3 · Air</strong><span>d &amp; f</span></li>
+            <li><strong>4 · RX ant</strong><span>captures</span></li>
+            <li><strong>5 · RX</strong><span>level</span></li>
+          </ol>
+          <div class="life-shell playground-main">
+            <p class="life-title">Two antennas — free-space link</p>
+            <canvas id="antViz" width="960" height="420" aria-label="TX to RX over real distance"></canvas>
+          </div>
+          <div class="playground-meta">
+            <div class="power-bars" id="powerBars" aria-live="polite"></div>
+            <p class="life-caption" id="lifeCaption"></p>
+          </div>
+          <div class="life-shell">
+            <p class="life-title">Coax standing wave (TX feed)</p>
+            <canvas id="lineViz" width="640" height="200" aria-label="Standing wave on feedline"></canvas>
+          </div>
         </div>
       </section>
     </div>
-
-    <!-- Full-width emitter / receiver playground -->
-    <section class="panel playground">
-      <h2>Emitter ↔ receiver playground</h2>
-      <div class="panel-body">
-        <div class="playground-grid">
-          <div class="life-shell">
-            <p class="life-title">Coax / feedline — voltage along the line</p>
-            <canvas id="lineViz" width="640" height="320" aria-label="Standing wave on a transmission line"></canvas>
-          </div>
-          <div class="life-shell playground-main">
-            <p class="life-title">Two antennas — how the second one hears what you change</p>
-            <ol class="link-chain" id="linkChain" aria-label="Signal path from your match to the receiver">
-              <li><strong>1 · You</strong><span>set Z on the Smith chart</span></li>
-              <li><strong>2 · TX ant</strong><span>accepts 1−|Γ|²</span></li>
-              <li><strong>3 · Air</strong><span>waves carry that RF</span></li>
-              <li><strong>4 · RX ant</strong><span>captures the field</span></li>
-              <li><strong>5 · RX radio</strong><span>shows the result</span></li>
-            </ol>
-            <canvas id="antViz" width="960" height="480" aria-label="TX antenna radiates; RX antenna receives the field"></canvas>
-            <label class="field path-dist">
-              Path distance (how far the second antenna is)
-              <div class="row">
-                <input type="range" id="pathDistRange" min="1" max="10" step="0.1" value="3" />
-                <input type="number" id="pathDist" min="1" max="10" step="0.1" value="3" />
-                <span class="unit-hint">×</span>
-              </div>
-            </label>
-            <p class="hint path-hint">RX power scales as radiated × 1/d². The second antenna is assumed matched — you only alter the TX match on the Smith chart.</p>
-          </div>
-        </div>
-        <div class="playground-meta">
-          <div class="power-bars" id="powerBars" aria-live="polite"></div>
-          <p class="life-caption" id="lifeCaption"></p>
-        </div>
-      </div>
-    </section>
 
     <footer>
       <span>Impedance Lab — interactive learner for Z ↔ Γ</span>
@@ -822,8 +676,14 @@
         latest: null,
         snapToGrid: true,
         snapped: false,
-        pathDist: 3,
+        pathDist: 5,      // meters
+        freqMHz: 2450,    // MHz
       };
+
+      const C0 = 299792458; // m/s
+      const PT_DBM = 0;     // assume 0 dBm transmitter for link budget story
+      const G_TX = 1;       // isotropic (keep teaching simple)
+      const G_RX = 1;
 
       /* Drawn Smith-grid values (normalized z). Snap points = every r ∩ x. */
       const R_GRID = [0, 0.2, 0.5, 1, 2, 5];
@@ -950,15 +810,16 @@
       }
 
       function renderMetrics(c) {
+        const link = linkLevels(c);
         const items = [
           { k: "Z_L", v: fmtComplex(c.r, c.x, "Ω") },
-          { k: "z = Z_L / Z₀", v: fmtComplex(c.zRe, c.zIm) },
-          { k: "Γ (complex)", v: fmtComplex(c.gRe, c.gIm) },
           { k: "|Γ|", v: fmt(c.gMag, 4), cls: qualityClass("gMag", c.gMag) },
-          { k: "∠Γ", v: `${fmt(c.gAng, 2)}°` },
-          { k: "VSWR", v: fmt(c.vswr, 3), cls: qualityClass("vswr", c.vswr) },
-          { k: "Return loss", v: Number.isFinite(c.rl) ? `${fmt(c.rl, 2)} dB` : "∞ dB", cls: qualityClass("rl", c.rl) },
-          { k: "Mismatch loss", v: Number.isFinite(c.ml) ? `${fmt(c.ml, 3)} dB` : "∞ dB" },
+          { k: "∠Γ", v: `${fmt(c.gAng, 1)}°` },
+          { k: "VSWR", v: fmt(c.vswr, 2), cls: qualityClass("vswr", c.vswr) },
+          { k: "d · f", v: `${fmt(link.d, 1)} m · ${fmt(state.freqMHz, 0)} MHz` },
+          { k: "FSPL", v: `${fmt(link.fsplDb, 1)} dB` },
+          { k: "P_RX", v: `${fmt(link.prDbm, 1)} dBm`, cls: link.rx > 0.45 ? "good" : link.rx > 0.2 ? "mid" : "bad" },
+          { k: "Radiated", v: `${fmt(link.radiated * 100, 0)}%`, cls: link.radiated > 0.7 ? "good" : link.radiated > 0.3 ? "mid" : "bad" },
         ];
         $("metrics").innerHTML = items.map(it => `
           <div class="metric">
@@ -970,59 +831,75 @@
 
       function linkLevels(c) {
         const g2 = Math.min(1, c.gMag * c.gMag);
-        const radiated = Math.max(0, 1 - g2); // fraction accepted at TX antenna
-        const d = Math.max(1, state.pathDist);
-        // Free-space power ~ 1/d²; normalize so d=1 → full coupling of radiated share
-        const pathGain = 1 / (d * d);
-        const rx = Math.min(1, radiated * pathGain);
-        return { g2, radiated, d, pathGain, rx };
+        const radiated = Math.max(0, 1 - g2); // 1 − |Γ|²
+        const d = Math.max(0.5, state.pathDist); // meters
+        const fHz = Math.max(1e6, state.freqMHz * 1e6);
+        const lambda = C0 / fHz; // meters
+        // Friis (isotropic): Pr/Pt = (λ / 4πd)² · radiated
+        const friisFactor = (lambda / (4 * Math.PI * d)) ** 2;
+        const prOverPt = radiated * G_TX * G_RX * friisFactor;
+        const fsplLinear = 1 / Math.max(friisFactor, 1e-30);
+        const fsplDb = 10 * Math.log10(fsplLinear);
+        const prDbm = PT_DBM + 10 * Math.log10(Math.max(prOverPt, 1e-30));
+        // Map RX level for bars/UI: strong ≈ −20 dBm, dead ≈ −100 dBm
+        const rx = Math.min(1, Math.max(0, (prDbm + 100) / 80));
+        // Path “remaining” relative to 0.5 m matched reference
+        const refFriis = (lambda / (4 * Math.PI * 0.5)) ** 2;
+        const pathRel = Math.min(1, friisFactor / Math.max(refFriis, 1e-30));
+        return {
+          g2, radiated, d, lambda, fHz,
+          friisFactor, prOverPt, fsplDb, prDbm, rx, pathRel,
+        };
+      }
+
+      function updateLambdaHint() {
+        const el = $("lambdaHint");
+        if (!el) return;
+        const lam = C0 / (state.freqMHz * 1e6);
+        el.textContent = `λ ≈ ${fmt(lam, 3)} m · at d=${fmt(state.pathDist, 1)} m, FSPL grows with distance and frequency`;
       }
 
       function renderRealLifeText(c) {
-        const { g2, radiated, d, pathGain, rx } = linkLevels(c);
+        const { g2, radiated, d, fsplDb, prDbm, rx, pathRel, lambda } = linkLevels(c);
         const reflectedPct = Math.round(g2 * 100);
         const radPct = Math.round(radiated * 100);
         const rxPct = Math.round(rx * 100);
-        const pathPct = Math.round(pathGain * 100);
+        const pathPct = Math.round(pathRel * 100);
 
         $("powerBars").innerHTML = `
-          <div class="power-bar"><span>TX forward</span><div class="track"><div class="fill fwd" style="width:100%"></div></div><span>100%</span></div>
+          <div class="power-bar"><span>TX forward</span><div class="track"><div class="fill fwd" style="width:100%"></div></div><span>0 dBm</span></div>
           <div class="power-bar"><span>Reflected</span><div class="track"><div class="fill ref" style="width:${reflectedPct}%"></div></div><span>${reflectedPct}%</span></div>
-          <div class="power-bar"><span>Radiated (TX ant)</span><div class="track"><div class="fill acc" style="width:${radPct}%"></div></div><span>${radPct}%</span></div>
-          <div class="power-bar"><span>Path 1/d²</span><div class="track"><div class="fill fwd" style="width:${pathPct}%"></div></div><span>×${fmt(pathGain, 2)}</span></div>
-          <div class="power-bar"><span>At RX ant</span><div class="track"><div class="fill acc" style="width:${rxPct}%"></div></div><span>${rxPct}%</span></div>
+          <div class="power-bar"><span>Radiated</span><div class="track"><div class="fill acc" style="width:${radPct}%"></div></div><span>${radPct}%</span></div>
+          <div class="power-bar"><span>FSPL</span><div class="track"><div class="fill fwd" style="width:${Math.min(100, pathPct)}"></div></div><span>${fmt(fsplDb, 1)} dB</span></div>
+          <div class="power-bar"><span>P_RX</span><div class="track"><div class="fill acc" style="width:${rxPct}%"></div></div><span>${fmt(prDbm, 1)} dBm</span></div>
         `;
 
-        // Highlight chain steps by quality
         const steps = $("linkChain")?.querySelectorAll("li");
         if (steps && steps.length === 5) {
           steps.forEach((el) => el.classList.remove("active", "dim"));
-          steps[0].classList.add("active"); // you always set Z
+          steps[0].classList.add("active");
           if (radiated > 0.5) steps[1].classList.add("active");
           else steps[1].classList.add("dim");
-          if (radiated > 0.15) steps[2].classList.add("active");
+          if (radiated > 0.15 && fsplDb < 70) steps[2].classList.add("active");
+          else if (radiated > 0.15) steps[2].classList.add("dim");
           else steps[2].classList.add("dim");
-          if (rx > 0.15) { steps[3].classList.add("active"); steps[4].classList.add("active"); }
-          else if (rx > 0.03) { steps[3].classList.add("active"); steps[4].classList.add("dim"); }
+          if (rx > 0.35) { steps[3].classList.add("active"); steps[4].classList.add("active"); }
+          else if (rx > 0.12) { steps[3].classList.add("active"); steps[4].classList.add("dim"); }
           else { steps[3].classList.add("dim"); steps[4].classList.add("dim"); }
         }
 
         let story;
-        if (rx >= 0.7) {
-          story = `<strong>Link is healthy.</strong> Your Smith-chart Z matches well, so the <em>TX antenna</em> radiates most of the power.
-            Those waves cross the air gap (d ≈ ${fmt(d, 1)}) and induce a voltage in the <em>second antenna</em> — the RX radio sees a strong signal (~${rxPct}%).`;
-        } else if (rx >= 0.25) {
-          story = `<strong>Link is usable.</strong> Radiated share ≈ ${radPct}% (rest reflects on the TX feed).
-            After free-space falloff 1/d² at d≈${fmt(d, 1)}, the RX antenna still captures a medium field (~${rxPct}%).
-            Improve the Smith match <em>or</em> move the antennas closer.`;
-        } else if (radiated < 0.2) {
-          story = `<strong>TX match is the problem.</strong> |Γ| is high — little RF leaves <em>your</em> antenna, so there is almost nothing for the second antenna to receive (RX ≈ ${rxPct}%), even nearby.
-            Fix Z on the Smith chart first; distance cannot create signal that was never radiated.`;
+        if (rx >= 0.55) {
+          story = `<strong>Link OK at ${fmt(d, 1)} m.</strong> Match radiates ${radPct}%. At ${fmt(state.freqMHz, 0)} MHz (λ≈${fmt(lambda, 3)} m), FSPL ≈ ${fmt(fsplDb, 1)} dB → P<sub>RX</sub> ≈ ${fmt(prDbm, 1)} dBm.`;
+        } else if (radiated < 0.25) {
+          story = `<strong>TX match is the bottleneck.</strong> Only ${radPct}% leaves your antenna. Fix Z on the Smith chart — moving closer cannot create RF that was reflected.`;
+        } else if (rx >= 0.2) {
+          story = `<strong>Usable but thin.</strong> Radiated ${radPct}% · d = ${fmt(d, 1)} m · f = ${fmt(state.freqMHz, 0)} MHz · FSPL ${fmt(fsplDb, 1)} dB → P<sub>RX</sub> ${fmt(prDbm, 1)} dBm. Improve match, shorten path, or lower frequency.`;
         } else {
-          story = `<strong>Path is too long for this radiated power.</strong> TX radiates ~${radPct}%, but at d≈${fmt(d, 1)} the 1/d² loss leaves only ~${rxPct}% at the RX antenna.
-            Shorten the path slider, or improve the match to radiate more.`;
+          story = `<strong>Out of range for this match/freq.</strong> At ${fmt(d, 1)} m and ${fmt(state.freqMHz, 0)} MHz, FSPL ≈ ${fmt(fsplDb, 1)} dB leaves P<sub>RX</sub> ≈ ${fmt(prDbm, 1)} dBm. Try 5→1 m, or 2.45 GHz→433 MHz, or Matched preset.`;
         }
         $("lifeCaption").innerHTML = story;
+        updateLambdaHint();
       }
 
       function drawDipole(ctxA, x, y, half, color = "#e8eef2", tip = "#ff8a3d") {
@@ -1182,17 +1059,18 @@
         ctxA.fillStyle = bg;
         ctxA.fillRect(0, 0, w, h);
 
-        const { g2, radiated, d, rx } = linkLevels(c);
+        const { g2, radiated, d, rx, fsplDb, prDbm, lambda } = linkLevels(c);
         const t = now / 1000;
-        const fieldAmp = Math.sqrt(Math.max(0, rx)); // E-field ~ sqrt(power)
+        const fieldAmp = Math.sqrt(Math.max(0, rx));
 
-        // Positions stretch slightly with distance for storytelling
+        // Map real meters (0.5…50) onto pixel gap (log so 5 m and 50 m both readable)
+        const dNorm = Math.log(d / 0.5) / Math.log(50 / 0.5); // 0..1
         const txRadioX = 48;
-        const txAntX = 150;
-        const span = 220 + (d - 1) * 18; // air gap grows a bit with d
-        const rxAntX = Math.min(w - 150, txAntX + span);
-        const rxRadioX = Math.min(w - 48, rxAntX + 100);
-        const midY = h * 0.46;
+        const txAntX = 130;
+        const span = 160 + dNorm * Math.max(120, w - 420);
+        const rxAntX = Math.min(w - 140, txAntX + span);
+        const rxRadioX = Math.min(w - 42, rxAntX + 95);
+        const midY = h * 0.44;
 
         // Ground / dashed path line
         ctxA.strokeStyle = "rgba(90,140,170,0.25)";
@@ -1202,9 +1080,10 @@
         ctxA.lineTo(rxAntX - 20, midY);
         ctxA.stroke();
         ctxA.setLineDash([]);
-        ctxA.fillStyle = "rgba(180,210,230,0.45)";
-        ctxA.font = "10px IBM Plex Mono, monospace";
-        ctxA.fillText(`free space · d = ${fmt(d, 1)}`, (txAntX + rxAntX) / 2 - 48, midY + 78);
+        ctxA.fillStyle = "rgba(180,210,230,0.55)";
+        ctxA.font = "11px IBM Plex Mono, monospace";
+        const gapLabel = `d = ${fmt(d, 1)} m · ${fmt(state.freqMHz, 0)} MHz · λ=${fmt(lambda, 3)} m`;
+        ctxA.fillText(gapLabel, Math.max(txAntX, (txAntX + rxAntX) / 2 - 90), midY + 72);
 
         // —— TX radio + coax ——
         ctxA.fillStyle = "#1a8f5c";
@@ -1328,9 +1207,9 @@
         let rxColor = "#c45c26";
         let rxLabel = "NO SIGNAL";
         if (rx >= 0.7) { rxColor = "#1a8f5c"; rxLabel = "STRONG"; }
-        else if (rx >= 0.35) { rxColor = "#2dd4a8"; rxLabel = "GOOD"; }
-        else if (rx >= 0.12) { rxColor = "#e8c36a"; rxLabel = "WEAK"; }
-        else if (rx > 0.02) { rxColor = "#ff8a3d"; rxLabel = "NOISY"; }
+        else if (rx >= 0.45) { rxColor = "#2dd4a8"; rxLabel = "GOOD"; }
+        else if (rx >= 0.25) { rxColor = "#e8c36a"; rxLabel = "WEAK"; }
+        else if (rx > 0.1) { rxColor = "#ff8a3d"; rxLabel = "NOISY"; }
 
         ctxA.fillStyle = "#152636";
         roundRect(ctxA, rxRadioX - 30, midY - 34, 60, 68, 8);
@@ -1357,14 +1236,14 @@
         ctxA.fillText(rxLabel, rxRadioX - 20, midY + 32);
 
         // Equation strip
-        ctxA.fillStyle = "rgba(180,210,230,0.7)";
+        ctxA.fillStyle = "rgba(180,210,230,0.75)";
         ctxA.font = "10px IBM Plex Mono, monospace";
         ctxA.fillText(
-          `P_RX ∝ (1−|Γ|²) / d²  =  ${fmt(radiated, 2)} / ${fmt(d * d, 1)}  →  ${fmt(rx * 100, 0)}%`,
-          14,
-          h - 14
+          `Friis: P_RX/P_TX = (λ/4πd)²(1−|Γ|²) → FSPL ${fmt(fsplDb, 1)} dB · P_RX ${fmt(prDbm, 1)} dBm`,
+          12,
+          h - 12
         );
-        ctxA.fillText("Smith changes TX match only", w - 200, h - 14);
+        ctxA.fillText("Smith = TX match only", w - 160, h - 12);
       }
 
       function roundRect(ctxR, x, y, w, h, r) {
@@ -1771,14 +1650,55 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
       });
 
       const syncPathDist = (v) => {
-        const d = Math.min(10, Math.max(1, Number(v) || 3));
+        const d = Math.min(50, Math.max(0.5, Number(v) || 5));
         state.pathDist = d;
         $("pathDist").value = d;
         $("pathDistRange").value = d;
+        document.querySelectorAll("#distPresets button").forEach((b) => {
+          b.classList.toggle("active", Math.abs(Number(b.dataset.d) - d) < 0.05);
+        });
         update();
       };
       $("pathDist").addEventListener("input", () => syncPathDist($("pathDist").value));
       $("pathDistRange").addEventListener("input", () => syncPathDist($("pathDistRange").value));
+      $("distPresets")?.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-d]");
+        if (!btn) return;
+        syncPathDist(btn.dataset.d);
+      });
+
+      const syncFreq = (v) => {
+        const f = Math.min(6000, Math.max(100, Number(v) || 2450));
+        state.freqMHz = f;
+        $("freq").value = f;
+        $("freqRange").value = f;
+        document.querySelectorAll("#freqPresets button").forEach((b) => {
+          b.classList.toggle("active", Number(b.dataset.f) === f);
+        });
+        update();
+      };
+      $("freq").addEventListener("input", () => syncFreq($("freq").value));
+      $("freqRange").addEventListener("input", () => syncFreq($("freqRange").value));
+      $("freqPresets")?.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-f]");
+        if (!btn) return;
+        syncFreq(btn.dataset.f);
+      });
+
+      function fitCanvas(canvasEl) {
+        const parent = canvasEl.parentElement;
+        if (!parent) return;
+        const rect = parent.getBoundingClientRect();
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const cssW = Math.max(120, rect.width - 8);
+        const cssH = Math.max(80, rect.height - 28);
+        const w = Math.floor(cssW * dpr);
+        const h = Math.floor(cssH * dpr);
+        if (canvasEl.width !== w || canvasEl.height !== h) {
+          canvasEl.width = w;
+          canvasEl.height = h;
+        }
+      }
 
       canvas.addEventListener("pointerdown", (e) => {
         state.dragging = true;
@@ -1821,12 +1741,19 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
           ctx.lineWidth = 1;
           ctx.stroke();
 
+          fitCanvas(lineCanvas);
+          fitCanvas(antCanvas);
           drawLineViz(c, now);
           drawAntViz(c, now);
         }
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
+      window.addEventListener("resize", () => {
+        fitCanvas(lineCanvas);
+        fitCanvas(antCanvas);
+        update();
+      });
 
       const repo = "https://github.com/Tarekchehahde/impedance-reflection-lab";
       $("footerLink").innerHTML = `<a href="${repo}" target="_blank" rel="noopener">GitHub</a>`;
