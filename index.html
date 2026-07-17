@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Impedance Lab — Reflection Coefficient Learner</title>
+  <meta name="description" content="Interactive Smith-chart lab: learn impedance, reflection coefficient Γ, VSWR, and return loss with live calculations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #102033;
+      --ink-soft: #3a5168;
+      --paper: #f2f5f8;
+      --paper-2: #e4ebf2;
+      --line: #c5d2de;
+      --teal: #0d7c7c;
+      --teal-deep: #065a5a;
+      --copper: #c45c26;
+      --signal: #1a8f5c;
+      --warn: #b45309;
+      --chart-bg: #0a1624;
+      --chart-grid: #1e3a52;
+      --chart-r: #4a9bb8;
+      --chart-x: #7a6a9a;
+      --marker: #ff8a3d;
+      --glow: rgba(13, 124, 124, 0.18);
+      --radius: 14px;
+      --shadow: 0 18px 50px rgba(16, 32, 51, 0.08);
+      --font: "Outfit", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(13, 124, 124, 0.12), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(196, 92, 38, 0.08), transparent 50%),
+        linear-gradient(180deg, #f7fafc 0%, var(--paper) 40%, #eef3f7 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 3rem;
+    }
+
+    header.hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.5rem;
+      align-items: end;
+      margin-bottom: 1.5rem;
+      padding: 0.5rem 0 1.25rem;
+      border-bottom: 1px solid var(--line);
+      animation: rise 0.7s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .brand {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin: 0;
+    }
+    .brand span {
+      color: var(--teal);
+      display: block;
+      font-size: 0.42em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+    }
+    .lede {
+      margin: 0.85rem 0 0;
+      color: var(--ink-soft);
+      font-size: 1.05rem;
+      max-width: 36ch;
+      line-height: 1.45;
+    }
+    .hero-aside {
+      text-align: right;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .hero-aside strong { color: var(--ink); font-weight: 600; }
+    .hero-aside code {
+      font-family: var(--mono);
+      font-size: 0.85em;
+      background: var(--paper-2);
+      padding: 0.12em 0.4em;
+      border-radius: 4px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) 1fr minmax(280px, 340px);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+      animation: rise 0.8s ease both;
+    }
+    .panel:nth-child(2) { animation-delay: 0.06s; }
+    .panel:nth-child(3) { animation-delay: 0.12s; }
+
+    .panel h2 {
+      margin: 0;
+      padding: 0.9rem 1rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(13, 124, 124, 0.08), transparent);
+    }
+
+    .panel-body { padding: 1rem; }
+
+    label.field {
+      display: grid;
+      gap: 0.35rem;
+      margin-bottom: 0.9rem;
+      font-size: 0.86rem;
+      color: var(--ink-soft);
+    }
+    label.field .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+    input[type="number"] {
+      width: 5.5rem;
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+    input[type="number"]:focus {
+      outline: 2px solid rgba(13, 124, 124, 0.35);
+      border-color: var(--teal);
+    }
+
+    .mode-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .mode-toggle button,
+    .presets button,
+    .ghost-btn {
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 550;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .mode-toggle button.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .mode-toggle button:hover,
+    .presets button:hover,
+    .ghost-btn:hover {
+      border-color: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    .presets button {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.55rem;
+      font-family: var(--mono);
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin: 0.4rem 0 0;
+      line-height: 1.4;
+    }
+
+    .chart-shell {
+      background: var(--chart-bg);
+      border-radius: 12px;
+      padding: 0.75rem;
+      position: relative;
+    }
+    canvas#smith {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: crosshair;
+      border-radius: 8px;
+      touch-action: none;
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+    }
+    .chart-legend i {
+      display: inline-block;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      margin-right: 0.35rem;
+      vertical-align: -0.05rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+    .metric {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .metric:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+    .metric .k {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 0.25rem;
+    }
+    .metric .v {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      font-weight: 550;
+      color: var(--ink);
+      word-break: break-all;
+    }
+    .metric .v.good { color: var(--signal); }
+    .metric .v.mid { color: var(--warn); }
+    .metric .v.bad { color: var(--copper); }
+
+    .calc-steps {
+      display: grid;
+      gap: 0.65rem;
+    }
+    .step {
+      border-left: 3px solid var(--teal);
+      padding: 0.45rem 0 0.45rem 0.75rem;
+      background: linear-gradient(90deg, rgba(13, 124, 124, 0.06), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+    .step .n {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal-deep);
+      font-weight: 600;
+    }
+    .step .eq {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      margin: 0.25rem 0;
+      line-height: 1.45;
+    }
+    .step .note {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    details.lesson {
+      margin-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      padding-top: 0.75rem;
+    }
+    details.lesson summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--teal-deep);
+      list-style: none;
+    }
+    details.lesson summary::-webkit-details-marker { display: none; }
+    details.lesson summary::before {
+      content: "▸ ";
+      color: var(--copper);
+    }
+    details.lesson[open] summary::before { content: "▾ "; }
+    details.lesson p, details.lesson ul {
+      font-size: 0.86rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    details.lesson ul { padding-left: 1.1rem; }
+
+    footer {
+      margin-top: 1.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      justify-content: space-between;
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--teal-deep); }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr 1fr; }
+      .panel.chart-panel { grid-column: 1 / -1; order: -1; }
+      header.hero { grid-template-columns: 1fr; }
+      .hero-aside { text-align: left; }
+    }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <h1 class="brand"><span>RF learning lab</span>Impedance Lab</h1>
+        <p class="lede">Drag the Smith chart or tune R and X — watch Γ, VSWR, and return loss update with every step of the math.</p>
+      </div>
+      <div class="hero-aside">
+        <strong>Core idea:</strong> a load impedance <code>Z<sub>L</sub></code> maps to a reflection coefficient <code>Γ</code> on the unit circle. Match → center. Open/short → rim.
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Controls -->
+      <section class="panel">
+        <h2>Inputs</h2>
+        <div class="panel-body">
+          <div class="mode-toggle" role="tablist" aria-label="Calculation mode">
+            <button type="button" id="modeZ" class="active" aria-pressed="true">Z → Γ</button>
+            <button type="button" id="modeG" aria-pressed="false">Γ → Z</button>
+          </div>
+
+          <div id="zInputs">
+            <label class="field">
+              Characteristic impedance Z₀ (Ω)
+              <div class="row">
+                <input type="range" id="z0Range" min="1" max="150" step="0.1" value="50" />
+                <input type="number" id="z0" min="0.1" step="0.1" value="50" />
+              </div>
+            </label>
+            <label class="field">
+              Resistance R (Ω)
+              <div class="row">
+                <input type="range" id="rRange" min="0" max="250" step="0.1" value="50" />
+                <input type="number" id="r" min="0" step="0.1" value="50" />
+              </div>
+            </label>
+            <label class="field">
+              Reactance X (Ω)
+              <div class="row">
+                <input type="range" id="xRange" min="-250" max="250" step="0.1" value="0" />
+                <input type="number" id="x" step="0.1" value="0" />
+              </div>
+            </label>
+          </div>
+
+          <div id="gInputs" hidden>
+            <label class="field">
+              |Γ| magnitude (0…1)
+              <div class="row">
+                <input type="range" id="gMagRange" min="0" max="1" step="0.001" value="0" />
+                <input type="number" id="gMag" min="0" max="1" step="0.001" value="0" />
+              </div>
+            </label>
+            <label class="field">
+              ∠Γ angle (degrees)
+              <div class="row">
+                <input type="range" id="gAngRange" min="-180" max="180" step="0.1" value="0" />
+                <input type="number" id="gAng" min="-180" max="180" step="0.1" value="0" />
+              </div>
+            </label>
+            <label class="field">
+              Reference Z₀ (Ω)
+              <div class="row">
+                <input type="range" id="z0gRange" min="1" max="150" step="0.1" value="50" />
+                <input type="number" id="z0g" min="0.1" step="0.1" value="50" />
+              </div>
+            </label>
+          </div>
+
+          <p class="hint" style="margin-bottom:0.55rem">Presets (Z₀ = 50 Ω)</p>
+          <div class="presets" id="presets">
+            <button type="button" data-r="50" data-x="0">Matched</button>
+            <button type="button" data-r="0" data-x="0">Short</button>
+            <button type="button" data-r="1e9" data-x="0" data-open="1">Open</button>
+            <button type="button" data-r="25" data-x="0">25 Ω</button>
+            <button type="button" data-r="100" data-x="0">100 Ω</button>
+            <button type="button" data-r="50" data-x="50">50+j50</button>
+            <button type="button" data-r="50" data-x="-50">50−j50</button>
+            <button type="button" data-r="75" data-x="25">75+j25</button>
+          </div>
+          <p class="hint">Tip: click/drag on the chart to place Γ. Outer rim = total reflection.</p>
+        </div>
+      </section>
+
+      <!-- Chart -->
+      <section class="panel chart-panel">
+        <h2>Smith chart · Γ plane</h2>
+        <div class="panel-body">
+          <div class="chart-shell">
+            <canvas id="smith" width="720" height="720" aria-label="Interactive Smith chart"></canvas>
+          </div>
+          <div class="chart-legend">
+            <span><i style="background:#4a9bb8"></i>constant r</span>
+            <span><i style="background:#7a6a9a"></i>constant x</span>
+            <span><i style="background:#ff8a3d"></i>operating point</span>
+            <span><i style="background:#2dd4a8"></i>|Γ| circle</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results + steps -->
+      <section class="panel">
+        <h2>Results &amp; walkthrough</h2>
+        <div class="panel-body">
+          <div class="metrics" id="metrics"></div>
+          <h2 style="margin:1.1rem -1rem 0.75rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">Step-by-step</h2>
+          <div class="calc-steps" id="steps"></div>
+
+          <details class="lesson" open>
+            <summary>What am I looking at?</summary>
+            <p>
+              The Smith chart is the complex plane of Γ = Γ<sub>r</sub> + jΓ<sub>i</sub>.
+              Every passive load with R ≥ 0 lands inside (or on) the unit circle.
+            </p>
+            <ul>
+              <li><strong>Center</strong> — matched load, Γ = 0, no reflection.</li>
+              <li><strong>Right rim</strong> — open circuit (Γ ≈ +1).</li>
+              <li><strong>Left rim</strong> — short circuit (Γ ≈ −1).</li>
+              <li><strong>|Γ|</strong> — radius from center; larger means worse match.</li>
+              <li><strong>VSWR</strong> — (1+|Γ|)/(1−|Γ|); 1 is perfect, ∞ is total reflection.</li>
+            </ul>
+          </details>
+
+          <details class="lesson">
+            <summary>Formulas used here</summary>
+            <p style="font-family:var(--mono); font-size:0.8rem;">
+              z = Z<sub>L</sub> / Z₀<br />
+              Γ = (z − 1) / (z + 1)<br />
+              Z<sub>L</sub> = Z₀ (1 + Γ) / (1 − Γ)<br />
+              VSWR = (1 + |Γ|) / (1 − |Γ|)<br />
+              RL = −20 log₁₀(|Γ|) dB<br />
+              ML = −10 log₁₀(1 − |Γ|²) dB
+            </p>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span>Impedance Lab — interactive learner for Z ↔ Γ</span>
+      <span id="footerLink"></span>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const canvas = $("smith");
+      const ctx = canvas.getContext("2d");
+
+      const state = {
+        mode: "z", // "z" | "g"
+        z0: 50,
+        r: 50,
+        x: 0,
+        dragging: false,
+      };
+
+      const fmt = (n, d = 3) => {
+        if (!Number.isFinite(n)) return "∞";
+        if (Math.abs(n) >= 1e6) return n.toExponential(2);
+        return Number(n.toFixed(d)).toString();
+      };
+
+      const fmtComplex = (re, im, unit = "") => {
+        const sign = im >= 0 ? "+" : "−";
+        return `${fmt(re, 4)} ${sign} j${fmt(Math.abs(im), 4)}${unit ? " " + unit : ""}`;
+      };
+
+      function syncPair(numId, rangeId, value, clamp) {
+        let v = Number(value);
+        if (!Number.isFinite(v)) return;
+        if (clamp) v = Math.min(clamp.max, Math.max(clamp.min, v));
+        $(numId).value = v;
+        if ($(rangeId)) {
+          const lo = Number($(rangeId).min);
+          const hi = Number($(rangeId).max);
+          $(rangeId).value = Math.min(hi, Math.max(lo, v));
+        }
+      }
+
+      function computeFromZ(r, x, z0) {
+        const zRe = r / z0;
+        const zIm = x / z0;
+        // Γ = (z-1)/(z+1)
+        const denRe = zRe + 1;
+        const denIm = zIm;
+        const numRe = zRe - 1;
+        const numIm = zIm;
+        const denMag2 = denRe * denRe + denIm * denIm;
+        let gRe = 0, gIm = 0;
+        if (denMag2 > 1e-30) {
+          gRe = (numRe * denRe + numIm * denIm) / denMag2;
+          gIm = (numIm * denRe - numRe * denIm) / denMag2;
+        } else {
+          gRe = 1;
+          gIm = 0;
+        }
+        return finish(gRe, gIm, r, x, z0, zRe, zIm);
+      }
+
+      function computeFromG(gMag, gAngDeg, z0) {
+        const rad = (gAngDeg * Math.PI) / 180;
+        const gRe = gMag * Math.cos(rad);
+        const gIm = gMag * Math.sin(rad);
+        // z = (1+Γ)/(1-Γ)
+        const denRe = 1 - gRe;
+        const denIm = -gIm;
+        const numRe = 1 + gRe;
+        const numIm = gIm;
+        const denMag2 = denRe * denRe + denIm * denIm;
+        let zRe = Infinity, zIm = 0;
+        if (denMag2 > 1e-30) {
+          zRe = (numRe * denRe + numIm * denIm) / denMag2;
+          zIm = (numIm * denRe - numRe * denIm) / denMag2;
+        }
+        const r = zRe * z0;
+        const x = zIm * z0;
+        return finish(gRe, gIm, r, x, z0, zRe, zIm);
+      }
+
+      function finish(gRe, gIm, r, x, z0, zRe, zIm) {
+        const gMag = Math.hypot(gRe, gIm);
+        const gAng = (Math.atan2(gIm, gRe) * 180) / Math.PI;
+        const vswr = gMag >= 1 - 1e-12 ? Infinity : (1 + gMag) / (1 - gMag);
+        const rl = gMag < 1e-15 ? Infinity : -20 * Math.log10(gMag);
+        const ml = gMag >= 1 ? Infinity : -10 * Math.log10(1 - gMag * gMag);
+        return { gRe, gIm, gMag, gAng, vswr, rl, ml, r, x, z0, zRe, zIm };
+      }
+
+      function qualityClass(kind, val) {
+        if (kind === "gMag") {
+          if (val < 0.1) return "good";
+          if (val < 0.33) return "mid";
+          return "bad";
+        }
+        if (kind === "vswr") {
+          if (val < 1.5) return "good";
+          if (val < 3) return "mid";
+          return "bad";
+        }
+        if (kind === "rl") {
+          if (val > 20) return "good";
+          if (val > 10) return "mid";
+          return "bad";
+        }
+        return "";
+      }
+
+      function renderMetrics(c) {
+        const items = [
+          { k: "Z_L", v: fmtComplex(c.r, c.x, "Ω") },
+          { k: "z = Z_L / Z₀", v: fmtComplex(c.zRe, c.zIm) },
+          { k: "Γ (complex)", v: fmtComplex(c.gRe, c.gIm) },
+          { k: "|Γ|", v: fmt(c.gMag, 4), cls: qualityClass("gMag", c.gMag) },
+          { k: "∠Γ", v: `${fmt(c.gAng, 2)}°` },
+          { k: "VSWR", v: fmt(c.vswr, 3), cls: qualityClass("vswr", c.vswr) },
+          { k: "Return loss", v: Number.isFinite(c.rl) ? `${fmt(c.rl, 2)} dB` : "∞ dB", cls: qualityClass("rl", c.rl) },
+          { k: "Mismatch loss", v: Number.isFinite(c.ml) ? `${fmt(c.ml, 3)} dB` : "∞ dB" },
+        ];
+        $("metrics").innerHTML = items.map(it => `
+          <div class="metric">
+            <div class="k">${it.k}</div>
+            <div class="v ${it.cls || ""}">${it.v}</div>
+          </div>
+        `).join("");
+      }
+
+      function renderSteps(c) {
+        const steps = [
+          {
+            n: "Step 1 — Normalize",
+            eq: `z = Z_L / Z₀ = (${fmt(c.r, 3)} ${c.x >= 0 ? "+" : "−"} j${fmt(Math.abs(c.x), 3)}) / ${fmt(c.z0, 3)} = ${fmtComplex(c.zRe, c.zIm)}`,
+            note: "Smith charts work in normalized impedance so Z₀ becomes the unit reference.",
+          },
+          {
+            n: "Step 2 — Reflection coefficient",
+            eq: `Γ = (z − 1) / (z + 1) = ${fmtComplex(c.gRe, c.gIm)}`,
+            note: "|Γ| = 0 means perfect match; |Γ| = 1 means all power reflects.",
+          },
+          {
+            n: "Step 3 — Polar form",
+            eq: `|Γ| = ${fmt(c.gMag, 4)},   ∠Γ = ${fmt(c.gAng, 2)}°`,
+            note: "Radius on the chart is |Γ|; angle is measured from the +real axis (right).",
+          },
+          {
+            n: "Step 4 — VSWR",
+            eq: `VSWR = (1 + |Γ|) / (1 − |Γ|) = ${fmt(c.vswr, 3)}`,
+            note: "Voltage standing wave ratio on the line. Matched line → VSWR = 1.",
+          },
+          {
+            n: "Step 5 — Return & mismatch loss",
+            eq: `RL = −20 log₁₀(|Γ|) = ${Number.isFinite(c.rl) ? fmt(c.rl, 2) + " dB" : "∞ dB"}
+ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " dB" : "∞ dB"}`,
+            note: "Return loss: how many dB down the reflected wave is. Mismatch loss: power not delivered to the load.",
+          },
+        ];
+        $("steps").innerHTML = steps.map(s => `
+          <div class="step">
+            <div class="n">${s.n}</div>
+            <div class="eq">${s.eq.replace(/\n/g, "<br>")}</div>
+            <p class="note">${s.note}</p>
+          </div>
+        `).join("");
+      }
+
+      /* —— Smith chart drawing —— */
+      function chartGeom() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const pad = 28;
+        const R = Math.min(w, h) / 2 - pad;
+        return { cx: w / 2, cy: h / 2, R };
+      }
+
+      function gammaToXY(gRe, gIm, geom) {
+        return {
+          x: geom.cx + gRe * geom.R,
+          y: geom.cy - gIm * geom.R,
+        };
+      }
+
+      function xyToGamma(px, py, geom) {
+        return {
+          gRe: (px - geom.cx) / geom.R,
+          gIm: (geom.cy - py) / geom.R,
+        };
+      }
+
+      function drawCircle(cx, cy, r, stroke, width = 1, dash = null) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = width;
+        ctx.setLineDash(dash || []);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      function drawSmith() {
+        const geom = chartGeom();
+        const { cx, cy, R } = geom;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // background vignette
+        const grd = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 1.15);
+        grd.addColorStop(0, "#122538");
+        grd.addColorStop(1, "#071018");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // unit circle fill
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(14, 40, 58, 0.9)";
+        ctx.fill();
+
+        // constant resistance circles: center (r/(r+1), 0), radius 1/(r+1)
+        const rVals = [0, 0.2, 0.5, 1, 2, 5];
+        rVals.forEach((r) => {
+          const rc = R / (r + 1);
+          const ccx = cx + (r / (r + 1)) * R;
+          drawCircle(ccx, cy, rc, "rgba(74, 155, 184, 0.55)", r === 0 || r === 1 ? 1.4 : 1);
+        });
+
+        // constant reactance arcs: center (1, 1/x), radius |1/x|
+        const xVals = [0.2, 0.5, 1, 2, 5];
+        xVals.forEach((x) => {
+          [x, -x].forEach((xv) => {
+            const rad = R / Math.abs(xv);
+            const ccx = cx + R;
+            const ccy = cy - (1 / xv) * R;
+            ctx.beginPath();
+            // clip to unit circle by drawing arc angles that stay inside
+            const pts = [];
+            for (let t = 0; t <= 1; t += 0.01) {
+              // parametrize angle around reactance circle, keep inside |Γ|<=1
+              const ang = xv > 0
+                ? Math.PI + t * Math.PI
+                : -t * Math.PI;
+              // better: sample and clip
+            }
+            // Sample circle and clip to unit disk
+            let started = false;
+            for (let a = 0; a < Math.PI * 2; a += 0.02) {
+              const px = ccx + rad * Math.cos(a);
+              const py = ccy + rad * Math.sin(a);
+              const gRe = (px - cx) / R;
+              const gIm = (cy - py) / R;
+              if (gRe * gRe + gIm * gIm <= 1.002) {
+                if (!started) { ctx.moveTo(px, py); started = true; }
+                else ctx.lineTo(px, py);
+              } else if (started) {
+                ctx.strokeStyle = "rgba(122, 106, 154, 0.5)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.beginPath();
+                started = false;
+              }
+            }
+            if (started) {
+              ctx.strokeStyle = "rgba(122, 106, 154, 0.5)";
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          });
+        });
+
+        // horizontal real axis
+        ctx.beginPath();
+        ctx.moveTo(cx - R, cy);
+        ctx.lineTo(cx + R, cy);
+        ctx.strokeStyle = "rgba(180, 210, 230, 0.35)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // unit circle rim
+        drawCircle(cx, cy, R, "rgba(200, 230, 245, 0.85)", 2);
+
+        // labels
+        ctx.fillStyle = "rgba(180, 210, 230, 0.7)";
+        ctx.font = "12px IBM Plex Mono, monospace";
+        ctx.fillText("Γ = −1", cx - R + 8, cy - 8);
+        ctx.fillText("Γ = +1", cx + R - 52, cy - 8);
+        ctx.fillText("+j", cx + 6, cy - R + 16);
+        ctx.fillText("−j", cx + 6, cy + R - 8);
+        ctx.fillText("0", cx + 6, cy - 8);
+
+        return geom;
+      }
+
+      function drawMarker(c, geom) {
+        // |Γ| circle
+        drawCircle(geom.cx, geom.cy, c.gMag * geom.R, "rgba(45, 212, 168, 0.55)", 1.5, [4, 4]);
+
+        const p = gammaToXY(c.gRe, c.gIm, geom);
+        // pulse ring
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 138, 61, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff8a3d";
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // radial line
+        ctx.beginPath();
+        ctx.moveTo(geom.cx, geom.cy);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = "rgba(255, 138, 61, 0.45)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      function currentCompute() {
+        if (state.mode === "z") {
+          return computeFromZ(state.r, state.x, state.z0);
+        }
+        const gMag = Number($("gMag").value);
+        const gAng = Number($("gAng").value);
+        const z0 = Number($("z0g").value);
+        return computeFromG(gMag, gAng, z0);
+      }
+
+      function applyComputeToState(c) {
+        state.r = c.r;
+        state.x = c.x;
+        state.z0 = c.z0;
+      }
+
+      function update(fromChart = false) {
+        const c = currentCompute();
+        if (!fromChart && state.mode === "z") {
+          // keep
+        }
+        applyComputeToState(c);
+
+        if (state.mode === "g" && !fromChart) {
+          // sync Z displays indirectly via metrics only
+        } else if (state.mode === "z") {
+          syncPair("r", "rRange", state.r, { min: 0, max: 1e12 });
+          syncPair("x", "xRange", state.x, { min: -1e12, max: 1e12 });
+          syncPair("z0", "z0Range", state.z0, { min: 0.1, max: 1e6 });
+        }
+
+        // Keep Γ inputs in sync when in Z mode
+        if (state.mode === "z") {
+          syncPair("gMag", "gMagRange", c.gMag, { min: 0, max: 1 });
+          syncPair("gAng", "gAngRange", c.gAng, { min: -180, max: 180 });
+          syncPair("z0g", "z0gRange", c.z0, { min: 0.1, max: 1e6 });
+        } else {
+          syncPair("r", "rRange", Math.min(250, Math.max(0, c.r)), null);
+          syncPair("x", "xRange", Math.min(250, Math.max(-250, c.x)), null);
+          $("r").value = fmt(c.r, 4);
+          $("x").value = fmt(c.x, 4);
+          syncPair("z0", "z0Range", c.z0, { min: 0.1, max: 1e6 });
+        }
+
+        const geom = drawSmith();
+        drawMarker(c, geom);
+        renderMetrics(c);
+        renderSteps(c);
+      }
+
+      function setMode(mode) {
+        state.mode = mode;
+        $("modeZ").classList.toggle("active", mode === "z");
+        $("modeG").classList.toggle("active", mode === "g");
+        $("modeZ").setAttribute("aria-pressed", mode === "z");
+        $("modeG").setAttribute("aria-pressed", mode === "g");
+        $("zInputs").hidden = mode !== "z";
+        $("gInputs").hidden = mode !== "g";
+        update();
+      }
+
+      function bindPair(numId, rangeId, key, isZ0) {
+        const onNum = () => {
+          const v = Number($(numId).value);
+          if (isZ0) {
+            state.z0 = Math.max(0.1, v);
+            if (state.mode === "g") $("z0g").value = state.z0;
+          } else if (key === "r") state.r = Math.max(0, v);
+          else if (key === "x") state.x = v;
+          update();
+        };
+        const onRange = () => {
+          $(numId).value = $(rangeId).value;
+          onNum();
+        };
+        $(numId).addEventListener("input", onNum);
+        $(rangeId).addEventListener("input", onRange);
+      }
+
+      bindPair("z0", "z0Range", "z0", true);
+      bindPair("r", "rRange", "r");
+      bindPair("x", "xRange", "x");
+
+      ["gMag", "gAng", "z0g"].forEach((id) => {
+        const rangeId = id + "Range";
+        const apply = () => {
+          if (id === "z0g") state.z0 = Math.max(0.1, Number($("z0g").value));
+          update();
+        };
+        $(id).addEventListener("input", () => {
+          syncPair(id, rangeId, $(id).value, null);
+          apply();
+        });
+        $(rangeId).addEventListener("input", () => {
+          $(id).value = $(rangeId).value;
+          apply();
+        });
+      });
+
+      $("modeZ").addEventListener("click", () => setMode("z"));
+      $("modeG").addEventListener("click", () => setMode("g"));
+
+      $("presets").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-r]");
+        if (!btn) return;
+        setMode("z");
+        state.z0 = 50;
+        if (btn.dataset.open) {
+          state.r = 1e9;
+          state.x = 0;
+        } else {
+          state.r = Number(btn.dataset.r);
+          state.x = Number(btn.dataset.x);
+        }
+        update();
+      });
+
+      function pointerToLocal(evt) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+          x: (evt.clientX - rect.left) * scaleX,
+          y: (evt.clientY - rect.top) * scaleY,
+        };
+      }
+
+      function placeFromPointer(evt) {
+        const geom = chartGeom();
+        const { x, y } = pointerToLocal(evt);
+        let { gRe, gIm } = xyToGamma(x, y, geom);
+        let mag = Math.hypot(gRe, gIm);
+        if (mag > 1) {
+          gRe /= mag;
+          gIm /= mag;
+          mag = 1;
+        }
+        const ang = (Math.atan2(gIm, gRe) * 180) / Math.PI;
+        setMode("g");
+        syncPair("gMag", "gMagRange", mag, { min: 0, max: 1 });
+        syncPair("gAng", "gAngRange", ang, { min: -180, max: 180 });
+        syncPair("z0g", "z0gRange", state.z0, { min: 0.1, max: 150 });
+        update(true);
+      }
+
+      canvas.addEventListener("pointerdown", (e) => {
+        state.dragging = true;
+        canvas.setPointerCapture(e.pointerId);
+        placeFromPointer(e);
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        if (!state.dragging) return;
+        placeFromPointer(e);
+      });
+      canvas.addEventListener("pointerup", () => { state.dragging = false; });
+      canvas.addEventListener("pointercancel", () => { state.dragging = false; });
+
+      // soft breathing animation for marker ring
+      let t0 = performance.now();
+      function tick(now) {
+        if (now - t0 > 80) {
+          t0 = now;
+          const c = currentCompute();
+          const geom = drawSmith();
+          const pulse = 12 + Math.sin(now / 400) * 3;
+          drawCircle(geom.cx, geom.cy, c.gMag * geom.R, "rgba(45, 212, 168, 0.55)", 1.5, [4, 4]);
+          const p = gammaToXY(c.gRe, c.gIm, geom);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, pulse, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(255, 138, 61, 0.28)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff8a3d";
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(geom.cx, geom.cy);
+          ctx.lineTo(p.x, p.y);
+          ctx.strokeStyle = "rgba(255, 138, 61, 0.45)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      const repo = "https://github.com/Tarekchehahde/impedance-reflection-lab";
+      $("footerLink").innerHTML = `<a href="${repo}" target="_blank" rel="noopener">GitHub</a>`;
+
+      update();
+    })();
+  </script>
+</body>
+</html>
