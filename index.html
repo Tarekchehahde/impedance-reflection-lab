@@ -334,7 +334,7 @@
     }
     .playground .panel-body {
       display: grid;
-      grid-template-rows: auto minmax(0, 1.15fr) auto minmax(0, 0.7fr);
+      grid-template-rows: auto auto minmax(0, 1.2fr) auto minmax(0, 0.55fr);
       gap: 0.4rem;
       padding: 0.45rem;
     }
@@ -363,6 +363,74 @@
       border-radius: 6px;
       flex: 1 1 auto;
     }
+    canvas#antViz {
+      cursor: grab;
+      touch-action: none;
+    }
+    canvas#antViz.dragging { cursor: grabbing; }
+
+    .ant-controls {
+      display: grid;
+      grid-template-columns: minmax(160px, 1.2fr) minmax(180px, 1fr);
+      gap: 0.4rem 0.75rem;
+      align-items: end;
+      background: var(--chart-bg);
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
+      border: 1px solid rgba(90, 140, 170, 0.3);
+    }
+    .ant-controls .field {
+      margin: 0;
+      color: rgba(180, 210, 230, 0.85);
+      font-size: 0.66rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+    .ant-controls .row {
+      display: grid;
+      grid-template-columns: 1fr 4.4rem;
+      gap: 0.35rem;
+      align-items: center;
+      margin-top: 0.25rem;
+    }
+    .ant-controls input[type="number"] {
+      width: 100%;
+      background: rgba(7, 16, 24, 0.9);
+      border: 1px solid rgba(90, 140, 170, 0.45);
+      color: #e8eef2;
+      border-radius: 6px;
+      padding: 0.3rem 0.35rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+    }
+    .ant-controls .dist-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      align-self: center;
+    }
+    .ant-controls .dist-presets button {
+      background: rgba(255,255,255,0.06);
+      color: rgba(220, 235, 245, 0.9);
+      border-color: rgba(90, 140, 170, 0.4);
+      font-size: 0.68rem;
+      font-family: var(--mono);
+      padding: 0.28rem 0.4rem;
+    }
+    .ant-controls .dist-presets button.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .ant-controls .drag-hint {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: 0.68rem;
+      color: rgba(180, 210, 230, 0.6);
+      font-family: var(--mono);
+    }
+
     .link-chain {
       list-style: none;
       margin: 0;
@@ -633,9 +701,28 @@
             <li><strong>4 · RX ant</strong><span>captures</span></li>
             <li><strong>5 · RX</strong><span>level</span></li>
           </ol>
+          <div class="ant-controls">
+            <label class="field">
+              Antenna distance d (meters)
+              <div class="row">
+                <input type="range" id="pathDistPlayRange" min="0.5" max="50" step="0.1" value="5" />
+                <input type="number" id="pathDistPlay" min="0.5" max="50" step="0.1" value="5" />
+              </div>
+            </label>
+            <div class="dist-presets" id="distPresetsPlay">
+              <button type="button" data-d="0.5">0.5 m</button>
+              <button type="button" data-d="1">1 m</button>
+              <button type="button" data-d="2">2 m</button>
+              <button type="button" data-d="5" class="active">5 m</button>
+              <button type="button" data-d="10">10 m</button>
+              <button type="button" data-d="20">20 m</button>
+              <button type="button" data-d="50">50 m</button>
+            </div>
+            <p class="drag-hint">Drag the RX antenna on the canvas to set distance · same control as the left panel</p>
+          </div>
           <div class="life-shell playground-main">
             <p class="life-title">Two antennas — free-space link</p>
-            <canvas id="antViz" width="960" height="420" aria-label="TX to RX over real distance"></canvas>
+            <canvas id="antViz" width="960" height="420" aria-label="TX to RX over real distance — drag RX antenna to change meters"></canvas>
           </div>
           <div class="playground-meta">
             <div class="power-bars" id="powerBars" aria-live="polite"></div>
@@ -676,6 +763,8 @@
         snapped: false,
         pathDist: 5,      // meters
         freqMHz: 2450,    // MHz
+        draggingAnt: false,
+        antHit: null,     // last drawn antenna positions for drag
       };
 
       const C0 = 299792458; // m/s
@@ -1044,6 +1133,29 @@
         ctxL.fillText("green: voltage · orange: |V| envelope (VSWR shape)", left, h - 12);
       }
 
+      /** Map meters ↔ antenna pixel layout (log scale 0.5…50 m). */
+      function antLayoutFor(w, h, dMeters) {
+        const d = Math.min(50, Math.max(0.5, dMeters));
+        const dNorm = Math.log(d / 0.5) / Math.log(50 / 0.5);
+        const txRadioX = 48 * (w / 960);
+        const txAntX = 130 * (w / 960);
+        const spanMax = Math.max(120, w - 420 * (w / 960));
+        const span = 160 * (w / 960) + dNorm * spanMax;
+        const rxAntX = Math.min(w - 140 * (w / 960), txAntX + span);
+        const rxRadioX = Math.min(w - 42 * (w / 960), rxAntX + 95 * (w / 960));
+        const midY = h * 0.44;
+        return { d, dNorm, txRadioX, txAntX, span, spanMax, rxAntX, rxRadioX, midY, w };
+      }
+
+      function metersFromRxX(w, h, rxX) {
+        const base = antLayoutFor(w, h, 0.5);
+        const spanMax = base.spanMax;
+        const minSpan = 160 * (w / 960);
+        const span = Math.min(Math.max(rxX - base.txAntX, minSpan), minSpan + spanMax);
+        const dNorm = spanMax > 0 ? (span - minSpan) / spanMax : 0;
+        return Math.min(50, Math.max(0.5, 0.5 * Math.pow(50 / 0.5, dNorm)));
+      }
+
       /* —— Link: TX ant (your Z) → free space → RX ant → RX radio —— */
       function drawAntViz(c, now) {
         const w = antCanvas.width;
@@ -1061,14 +1173,9 @@
         const t = now / 1000;
         const fieldAmp = Math.sqrt(Math.max(0, rx));
 
-        // Map real meters (0.5…50) onto pixel gap (log so 5 m and 50 m both readable)
-        const dNorm = Math.log(d / 0.5) / Math.log(50 / 0.5); // 0..1
-        const txRadioX = 48;
-        const txAntX = 130;
-        const span = 160 + dNorm * Math.max(120, w - 420);
-        const rxAntX = Math.min(w - 140, txAntX + span);
-        const rxRadioX = Math.min(w - 42, rxAntX + 95);
-        const midY = h * 0.44;
+        const layout = antLayoutFor(w, h, d);
+        const { txRadioX, txAntX, rxAntX, rxRadioX, midY } = layout;
+        state.antHit = { ...layout, half: 56 * (h / 420) };
 
         // Ground / dashed path line
         ctxA.strokeStyle = "rgba(90,140,170,0.25)";
@@ -1079,7 +1186,7 @@
         ctxA.stroke();
         ctxA.setLineDash([]);
         ctxA.fillStyle = "rgba(180,210,230,0.55)";
-        ctxA.font = "11px IBM Plex Mono, monospace";
+        ctxA.font = `${Math.max(10, Math.round(11 * w / 960))}px IBM Plex Mono, monospace`;
         const gapLabel = `d = ${fmt(d, 1)} m · ${fmt(state.freqMHz, 0)} MHz · λ=${fmt(lambda, 3)} m`;
         ctxA.fillText(gapLabel, Math.max(txAntX, (txAntX + rxAntX) / 2 - 90), midY + 72);
 
@@ -1161,7 +1268,7 @@
         drawDipole(ctxA, rxAntX, midY, 52, "#e8eef2", "#2dd4a8");
         ctxA.fillStyle = "#2dd4a8";
         ctxA.font = "bold 10px Outfit, sans-serif";
-        ctxA.fillText("2nd ant (RX)", rxAntX - 34, midY - 64);
+        ctxA.fillText("2nd ant (RX) · drag", rxAntX - 42, midY - 64);
         ctxA.fillStyle = "rgba(180,210,230,0.7)";
         ctxA.font = "9px IBM Plex Mono, monospace";
         ctxA.fillText("captures E-field", rxAntX - 36, midY + 72);
@@ -1241,7 +1348,7 @@
           12,
           h - 12
         );
-        ctxA.fillText("Smith = TX match only", w - 160, h - 12);
+        ctxA.fillText("drag RX ant to change d", w - 170, h - 12);
       }
 
       function roundRect(ctxR, x, y, w, h, r) {
@@ -1650,23 +1757,72 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         update();
       });
 
-      const syncPathDist = (v) => {
+      const syncPathDist = (v, { silent } = {}) => {
         const d = Math.min(50, Math.max(0.5, Number(v) || 5));
         state.pathDist = d;
-        $("pathDist").value = d;
-        $("pathDistRange").value = d;
-        document.querySelectorAll("#distPresets button").forEach((b) => {
+        ["pathDist", "pathDistRange", "pathDistPlay", "pathDistPlayRange"].forEach((id) => {
+          const el = $(id);
+          if (el) el.value = d;
+        });
+        document.querySelectorAll("#distPresets button, #distPresetsPlay button").forEach((b) => {
           b.classList.toggle("active", Math.abs(Number(b.dataset.d) - d) < 0.05);
         });
-        update();
+        if (!silent) update();
       };
       $("pathDist").addEventListener("input", () => syncPathDist($("pathDist").value));
       $("pathDistRange").addEventListener("input", () => syncPathDist($("pathDistRange").value));
-      $("distPresets")?.addEventListener("click", (e) => {
+      $("pathDistPlay")?.addEventListener("input", () => syncPathDist($("pathDistPlay").value));
+      $("pathDistPlayRange")?.addEventListener("input", () => syncPathDist($("pathDistPlayRange").value));
+      const onDistPreset = (e) => {
         const btn = e.target.closest("button[data-d]");
         if (!btn) return;
         syncPathDist(btn.dataset.d);
+      };
+      $("distPresets")?.addEventListener("click", onDistPreset);
+      $("distPresetsPlay")?.addEventListener("click", onDistPreset);
+
+      function antPointerLocal(evt) {
+        const rect = antCanvas.getBoundingClientRect();
+        const scaleX = antCanvas.width / rect.width;
+        const scaleY = antCanvas.height / rect.height;
+        return {
+          x: (evt.clientX - rect.left) * scaleX,
+          y: (evt.clientY - rect.top) * scaleY,
+        };
+      }
+
+      function hitRxAntenna(x, y) {
+        const hit = state.antHit;
+        if (!hit) return false;
+        const half = hit.half || 50;
+        return Math.abs(x - hit.rxAntX) < 40 && Math.abs(y - hit.midY) < half + 20;
+      }
+
+      antCanvas.addEventListener("pointerdown", (e) => {
+        const hit = state.antHit;
+        if (!hit) return;
+        const { x, y } = antPointerLocal(e);
+        const nearRx = Math.abs(x - hit.rxAntX) < 55 && Math.abs(y - hit.midY) < hit.half + 30;
+        const inGap = x > hit.txAntX + 30 && x < hit.rxRadioX + 20 && Math.abs(y - hit.midY) < hit.half + 45;
+        if (!nearRx && !inGap) return;
+        state.draggingAnt = true;
+        antCanvas.classList.add("dragging");
+        antCanvas.setPointerCapture(e.pointerId);
+        const d = metersFromRxX(antCanvas.width, antCanvas.height, x);
+        syncPathDist(Number(d.toFixed(1)));
       });
+      antCanvas.addEventListener("pointermove", (e) => {
+        if (!state.draggingAnt) return;
+        const { x } = antPointerLocal(e);
+        const d = metersFromRxX(antCanvas.width, antCanvas.height, x);
+        syncPathDist(Number(d.toFixed(1)));
+      });
+      const endAntDrag = () => {
+        state.draggingAnt = false;
+        antCanvas.classList.remove("dragging");
+      };
+      antCanvas.addEventListener("pointerup", endAntDrag);
+      antCanvas.addEventListener("pointercancel", endAntDrag);
 
       const syncFreq = (v) => {
         const f = Math.min(6000, Math.max(100, Number(v) || 2450));
