@@ -216,23 +216,21 @@
     .chart-shell {
       background: var(--chart-bg);
       border-radius: 8px;
-      padding: 0.35rem;
+      padding: 0.5rem;
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
     canvas#smith {
-      width: auto;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      aspect-ratio: 1;
+      /* Sized as a square by JS (fitSmithCanvas) — never stretch */
       display: block;
       cursor: crosshair;
       border-radius: 6px;
       touch-action: none;
+      flex: 0 0 auto;
     }
     .chart-legend {
       display: flex;
@@ -1516,12 +1514,15 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
           syncPair("z0", "z0Range", c.z0, { min: 0.1, max: 1e6 });
         }
 
+        fitSmithCanvas();
         const geom = drawSmith();
         drawMarker(c, geom);
         renderMetrics(c);
         renderSteps(c);
         renderRealLifeText(c);
         state.latest = c;
+        fitCanvas(lineCanvas);
+        fitCanvas(antCanvas);
         drawLineViz(c, performance.now());
         drawAntViz(c, performance.now());
       }
@@ -1700,6 +1701,23 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         }
       }
 
+      /** Keep Smith chart perfectly square (never ellipse-stretched). */
+      function fitSmithCanvas() {
+        const shell = canvas.parentElement;
+        if (!shell) return;
+        const rect = shell.getBoundingClientRect();
+        const pad = 16;
+        const sideCss = Math.max(160, Math.floor(Math.min(rect.width, rect.height) - pad));
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const side = Math.floor(sideCss * dpr);
+        canvas.style.width = `${sideCss}px`;
+        canvas.style.height = `${sideCss}px`;
+        if (canvas.width !== side || canvas.height !== side) {
+          canvas.width = side;
+          canvas.height = side;
+        }
+      }
+
       canvas.addEventListener("pointerdown", (e) => {
         state.dragging = true;
         canvas.setPointerCapture(e.pointerId);
@@ -1718,6 +1736,7 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
         const c = state.latest || currentCompute();
         if (now - t0 > 40) {
           t0 = now;
+          fitSmithCanvas();
           const geom = drawSmith();
           const pulse = 12 + Math.sin(now / 400) * 3;
           drawCircle(geom.cx, geom.cy, c.gMag * geom.R, "rgba(45, 212, 168, 0.55)", 1.5, [4, 4]);
@@ -1750,6 +1769,7 @@ ML = −10 log₁₀(1 − |Γ|²) = ${Number.isFinite(c.ml) ? fmt(c.ml, 3) + " 
       }
       requestAnimationFrame(tick);
       window.addEventListener("resize", () => {
+        fitSmithCanvas();
         fitCanvas(lineCanvas);
         fitCanvas(antCanvas);
         update();
