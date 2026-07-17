@@ -15,10 +15,12 @@ Open `index.html` in a browser — no build step, no backend.
 ## Features
 
 - Drag the operating point on an interactive Smith chart
+- Live **coax standing-wave** and **antenna radiation** views driven by the same Γ
+- Power bars: forward / reflected / accepted (\(1-|\Gamma|^2\))
 - Sliders for \(R\), \(X\), \(Z_0\) (Z → Γ mode)
 - Sliders for \(|\Gamma|\), \(\angle\Gamma\) (Γ → Z mode)
 - Live step-by-step calculation walkthrough
-- Presets: matched, open, short, common loads
+- Presets: matched, open, short, dipole-like, detuned antenna
 
 ## Live
 
